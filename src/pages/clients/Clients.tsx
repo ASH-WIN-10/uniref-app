@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Addclients from "../misc/Addclients";
 
 const clientsData = [
     "Alice Johnson",
@@ -8,7 +9,7 @@ const clientsData = [
     "Edward Martin",
 ];
 
-export default function ClientsTable() {
+export default function Clients() {
     const [search, setSearch] = useState("");
 
     const filteredClients = clientsData.filter((client) =>
@@ -16,17 +17,17 @@ export default function ClientsTable() {
     );
 
     return (
-        <div className="p-6 max-w-2xl mx-auto">
-            <h1 className="text-2xl font-bold mb-4">Company List</h1>
+        <div className="mx-auto max-w-2xl p-6">
+            <h1 className="mb-4 text-2xl font-bold">Company List</h1>
             <input
                 type="text"
                 placeholder="Search company..."
-                className="mb-4 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="mb-4 w-full rounded-lg border border-gray-300 px-4 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
             />
 
-            <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden shadow">
+            <table className="min-w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
                 <thead className="bg-gray-100 text-left">
                     <tr>
                         <th className="px-6 py-3 text-sm font-medium text-gray-700">
@@ -36,8 +37,8 @@ export default function ClientsTable() {
                 </thead>
                 <tbody>
                     {filteredClients.map((client, index) => (
-                        <tr key={index} className="border-t  border-gray-200">
-                            <td className="px-6 py-3 hover:bg-gray-100 text-gray-800">
+                        <tr key={index} className="border-t border-gray-200">
+                            <td className="px-6 py-3 text-gray-800 hover:bg-gray-100">
                                 {client}
                             </td>
                         </tr>
@@ -51,6 +52,9 @@ export default function ClientsTable() {
                     )}
                 </tbody>
             </table>
+            <div className="absolute right-0 bottom-4 flex">
+                <Addclients />
+            </div>
         </div>
     );
 }
