@@ -1,11 +1,18 @@
-import { Button } from "./components/ui/button";
-
+import { Outlet } from "react-router";
+import Header from "./pages/misc/Header";
+import ClientsTable from "./pages/clients/Clients";
+import Addclients from "./pages/misc/Addclients";
 function App() {
     return (
-        <div>
-            <h1>Welcome to the React App</h1>
-            <p>This is a simple React application.</p>
-            <Button>Click me</Button>
+        <div className="min-h-screen">
+            <Header />
+            <main>
+                <Outlet />
+            </main>
+            <ClientsTable />
+            <div className="flex justify-end mt-30 ">
+                <Addclients />
+            </div>
         </div>
     );
 }
