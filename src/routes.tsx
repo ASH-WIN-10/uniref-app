@@ -1,5 +1,5 @@
 import App from "./App";
-
+import { CreateClients } from "./pages/clients/CreateClients";
 const routes = [
     {
         path: "/",
@@ -7,6 +7,10 @@ const routes = [
             {
                 index: true,
                 element: <App />,
+            },
+            {
+                path: "client/create",
+                element: <CreateClients />,
             },
         ],
     },
