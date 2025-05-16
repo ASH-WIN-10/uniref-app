@@ -3,7 +3,7 @@ import Header from "./pages/misc/Header";
 
 function App() {
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen bg-gray-100">
             <Header />
             <main>
                 <Outlet />
