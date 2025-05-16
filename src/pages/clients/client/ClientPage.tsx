@@ -6,6 +6,7 @@ interface File {
     id: number;
     created_at: string;
     original_file_name: string;
+    file_name: string;
     file_path: string;
     category: string;
     client_id: number;
@@ -21,11 +22,12 @@ interface Client {
 }
 
 async function getClient(clientId: number): Promise<Client> {
-    const res = await fetch(`http://localhost:8000/api/clients/${clientId}`);
+    const res = await fetch(`http://localhost:8080/v1/clients/${clientId}`);
     if (!res.ok) {
         throw new Error("Network response was not ok");
     }
-    return res.json();
+    const data = await res.json();
+    return data.client;
 }
 
 export default function ClientPage() {
