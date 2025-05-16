@@ -1,6 +1,8 @@
 import App from "./App";
-import { CreateClients } from "./pages/clients/CreateClients";
+import { CreateClients } from "./pages/clients/create/CreateClients";
 import Clients from "./pages/clients/Clients";
+import ClientPage from "./pages/clients/clientpage";
+
 const routes = [
     {
         path: "/",
@@ -11,8 +13,12 @@ const routes = [
                 element: <Clients />,
             },
             {
-                path: "client/create",
+                path: "clients/create",
                 element: <CreateClients />,
+            },
+            {
+                path: "clients/:id",
+                element: <ClientPage />,
             },
         ],
     },
