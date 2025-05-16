@@ -1,0 +1,137 @@
+import { useState, useRef } from "react";
+import { FileText, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+    FormDescription,
+} from "@/components/ui/form";
+
+export const FileUploadField = ({
+    name,
+    label,
+    description,
+    multiple = false,
+    control,
+    value,
+    onFilesChange,
+}: {
+    name: string;
+    label: string;
+    description: string;
+    multiple?: boolean;
+    control: any;
+    value: File[];
+    onFilesChange: (files: File[]) => void;
+}) => {
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [showFiles, setShowFiles] = useState(false);
+
+    return (
+        <FormField
+            control={control}
+            name={name}
+            render={({ field: { onChange: _, ref: __, ...fieldProps } }) => (
+                <FormItem>
+                    <FormLabel className="text-gray-700">{label}</FormLabel>
+                    <FormControl>
+                        <div className="space-y-2">
+                            <input
+                                type="file"
+                                accept=".pdf"
+                                multiple={multiple}
+                                onChange={(e) => {
+                                    const files = e.target.files;
+                                    if (files) {
+                                        const newFiles = multiple
+                                            ? [...value, ...Array.from(files)]
+                                            : files[0]
+                                              ? [files[0]]
+                                              : [];
+                                        onFilesChange(newFiles);
+                                    }
+                                }}
+                                className="hidden"
+                                ref={fileInputRef}
+                                {...fieldProps}
+                                value={undefined}
+                            />
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => fileInputRef.current?.click()}
+                                className="w-full">
+                                Choose File
+                            </Button>
+                            {value.length > 0 && (
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setShowFiles(!showFiles)}
+                                    className="bg-primary text-sm text-white">
+                                    {showFiles ? "Hide Files" : "Show Files"}
+                                </Button>
+                            )}
+
+                            {showFiles && value.length > 0 && (
+                                <div className="mt-2 space-y-2 rounded-md border p-2">
+                                    <div className="flex items-center justify-between border-b pb-2">
+                                        <span className="font-medium">
+                                            Uploaded Files
+                                        </span>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => onFilesChange([])}
+                                            className="h-7 text-xs text-red-500 hover:text-red-600">
+                                            Clear All
+                                        </Button>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        {value.map((file, index) => (
+                                            <div
+                                                key={`${file.name}-${index}`}
+                                                className="flex items-center justify-between rounded-sm bg-gray-50 px-2 py-1.5">
+                                                <div className="flex items-center gap-2">
+                                                    <FileText className="h-4 w-4 text-gray-500" />
+                                                    <span className="text-sm text-gray-700">
+                                                        {file.name}
+                                                    </span>
+                                                </div>
+
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        const newFiles =
+                                                            value.filter(
+                                                                (_, i) =>
+                                                                    i !== index,
+                                                            );
+                                                        onFilesChange(newFiles);
+                                                    }}
+                                                    className="h-7 w-7 p-0 text-gray-500 hover:text-red-500">
+                                                    <X className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </FormControl>
+                    <FormMessage />
+                    <FormDescription className="text-sm text-gray-500">
+                        {description}
+                    </FormDescription>
+                </FormItem>
+            )}
+        />
+    );
+};
