@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Addclients from "../misc/Addclients";
+import Addclients from "./Addclients";
 
 const clientsData = [
     "Alice Johnson",

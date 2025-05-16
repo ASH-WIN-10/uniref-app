@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 const BackButton = () => {
     return (
         <div className="mt-3 flex justify-center">
-            <Link to="/">
+            <Link to="/clients">
                 <Button>
                     <ArrowLeft />
                 </Button>

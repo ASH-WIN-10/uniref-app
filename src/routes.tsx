@@ -1,15 +1,21 @@
 import App from "./App";
 import { CreateClients } from "./pages/clients/create/CreateClients";
+import ClientPage from "./pages/clients/client/ClientPage";
+import { Link } from "react-router";
 import Clients from "./pages/clients/Clients";
-import ClientPage from "./pages/clients/clientpage";
 
 const routes = [
     {
         path: "/",
         element: <App />,
+        errorElement: <Link to="/">Go to home</Link>,
         children: [
             {
                 index: true,
+                element: <Link to="/clients">Clients</Link>,
+            },
+            {
+                path: "clients",
                 element: <Clients />,
             },
             {
