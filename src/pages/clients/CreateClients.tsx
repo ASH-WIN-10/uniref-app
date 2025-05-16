@@ -54,9 +54,12 @@ export function CreateClients() {
 
     return (
         <div className="mx-auto mt-15 max-w-2xl rounded-lg bg-white p-6 shadow-lg">
-            <h2 className="mb-6 text-2xl font-bold text-gray-800">
-                Add New Client
-            </h2>
+            <div className="flex flex-col items-start justify-between gap-4">
+                <BackButton />
+                <h2 className="mb-6 text-2xl font-bold text-gray-800">
+                    Add New Client
+                </h2>
+            </div>
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
@@ -147,7 +150,7 @@ export function CreateClients() {
                         <FileUploadField
                             name="purchaseOrder"
                             label="Purchase Order"
-                            description="Upload PDF file only"
+                            description="Upload only one PDF file"
                             control={form.control}
                             value={
                                 form.watch("purchaseOrder")
@@ -175,7 +178,7 @@ export function CreateClients() {
                         <FileUploadField
                             name="handingOverReport"
                             label="Handing Over Report"
-                            description="Upload PDF file only"
+                            description="Upload only one PDF file"
                             control={form.control}
                             value={
                                 form.watch("handingOverReport")
@@ -210,8 +213,6 @@ export function CreateClients() {
                     </div>
                 </form>
             </Form>
-
-            <BackButton />
         </div>
     );
 }
