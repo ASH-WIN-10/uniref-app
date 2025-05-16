@@ -16,22 +16,22 @@ import BackButton from "@/components/custom/BackButton";
 import { FileUploadField } from "./FileUploadField";
 
 const formSchema = z.object({
-    companyName: z.string().min(2, {
+    company_name: z.string().min(2, {
         message: "Company name must be at least 2 characters.",
     }),
-    clientName: z.string().min(2, {
+    client_name: z.string().min(2, {
         message: "Client name must be at least 2 characters.",
     }),
     email: z.string().email({
         message: "Please enter a valid email address.",
     }),
-    phoneNo: z.string().min(10, {
+    phone: z.string().min(10, {
         message: "Phone number must be at least 10 digits.",
     }),
-    purchaseOrder: z.instanceof(File).optional(),
-    invoices: z.array(z.instanceof(File)).optional(),
-    handingOverReport: z.instanceof(File).optional(),
-    pmsReports: z.array(z.instanceof(File)).optional(),
+    purchase_order: z.instanceof(File).optional(),
+    invoice: z.array(z.instanceof(File)).optional(),
+    handing_over_report: z.instanceof(File).optional(),
+    pms_reports: z.array(z.instanceof(File)).optional(),
 });
 
 export function CreateClients() {
@@ -41,10 +41,10 @@ export function CreateClients() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            companyName: "",
-            clientName: "",
+            company_name: "",
+            client_name: "",
             email: "",
-            phoneNo: "",
+            phone: "",
         },
     });
 
@@ -53,7 +53,7 @@ export function CreateClients() {
     };
 
     return (
-        <div className="mx-auto mt-15 max-w-2xl rounded-lg bg-white p-6 shadow-lg">
+        <div className="mx-auto mt-15 max-w-2xl rounded-lg bg-white p-6 shadow-xl/30">
             <div className="flex flex-col items-start justify-between gap-4">
                 <BackButton />
                 <h2 className="mb-6 text-2xl font-bold text-gray-800">
@@ -67,7 +67,7 @@ export function CreateClients() {
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <FormField
                             control={form.control}
-                            name="companyName"
+                            name="company_name"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-gray-700">
@@ -87,7 +87,7 @@ export function CreateClients() {
 
                         <FormField
                             control={form.control}
-                            name="clientName"
+                            name="client_name"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-gray-700">
@@ -128,7 +128,7 @@ export function CreateClients() {
 
                         <FormField
                             control={form.control}
-                            name="phoneNo"
+                            name="phone"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-gray-700">
@@ -148,50 +148,54 @@ export function CreateClients() {
                         />
 
                         <FileUploadField
-                            name="purchaseOrder"
+                            name="purchase_order"
                             label="Purchase Order"
                             description="Upload only one PDF file"
                             control={form.control}
                             value={
-                                form.watch("purchaseOrder")
-                                    ? [form.watch("purchaseOrder") as File]
+                                form.watch("purchase_order")
+                                    ? [form.watch("purchase_order") as File]
                                     : []
                             }
                             onFilesChange={(files) =>
-                                form.setValue("purchaseOrder", files[0])
+                                form.setValue("purchase_order", files[0])
                             }
                         />
 
                         <FileUploadField
-                            name="invoices"
-                            label="Invoices"
+                            name="invoice"
+                            label="Invoice"
                             description="Select PDF files"
                             multiple={true}
                             control={form.control}
                             value={uploadedInvoices}
                             onFilesChange={(files) => {
                                 setUploadedInvoices(files);
-                                form.setValue("invoices", files);
+                                form.setValue("invoice", files);
                             }}
                         />
 
                         <FileUploadField
-                            name="handingOverReport"
+                            name="handing_over_report"
                             label="Handing Over Report"
                             description="Upload only one PDF file"
                             control={form.control}
                             value={
-                                form.watch("handingOverReport")
-                                    ? [form.watch("handingOverReport") as File]
+                                form.watch("handing_over_report")
+                                    ? [
+                                          form.watch(
+                                              "handing_over_report",
+                                          ) as File,
+                                      ]
                                     : []
                             }
                             onFilesChange={(files) =>
-                                form.setValue("handingOverReport", files[0])
+                                form.setValue("handing_over_report", files[0])
                             }
                         />
 
                         <FileUploadField
-                            name="pmsReports"
+                            name="pms_reports"
                             label="PMS Reports"
                             description="Select PDF files"
                             multiple={true}
@@ -199,7 +203,7 @@ export function CreateClients() {
                             value={uploadedPmsReports}
                             onFilesChange={(files) => {
                                 setUploadedPmsReports(files);
-                                form.setValue("pmsReports", files);
+                                form.setValue("pms_reports", files);
                             }}
                         />
                     </div>
