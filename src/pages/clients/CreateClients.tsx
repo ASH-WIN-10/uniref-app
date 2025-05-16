@@ -48,10 +48,6 @@ export function CreateClients() {
         },
     });
 
-    const onSubmit = (values: z.infer<typeof formSchema>) => {
-        console.log(values);
-    };
-
     return (
         <div className="mx-auto mt-15 max-w-2xl rounded-lg bg-white p-6 shadow-xl/30">
             <div className="flex flex-col items-start justify-between gap-4">
@@ -62,7 +58,9 @@ export function CreateClients() {
             </div>
             <Form {...form}>
                 <form
-                    onSubmit={form.handleSubmit(onSubmit)}
+                    action="http://localhost:8080/v1/clients"
+                    method="POST"
+                    encType="multipart/form-data"
                     className="space-y-6">
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <FormField
