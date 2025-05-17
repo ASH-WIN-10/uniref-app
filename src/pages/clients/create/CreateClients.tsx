@@ -78,6 +78,7 @@ export function CreateClients() {
             });
         }
 
+        let clientId: Number;
         fetch("http://192.168.0.31:8080/v1/clients", {
             method: "POST",
             body: formData,
@@ -85,6 +86,10 @@ export function CreateClients() {
             .then((response) => {
                 if (!response.ok)
                     throw new Error("Network response was not ok");
+                return response.json();
+            })
+            .then((data) => {
+                clientId = data.client.id;
             })
             .catch((error) => {
                 console.error("Error:", error);
@@ -92,7 +97,7 @@ export function CreateClients() {
             })
             .finally(() => {
                 toast.success("Client created successfully");
-                navigate("/clients");
+                navigate(`/clients/${clientId}`);
             });
     }
 
