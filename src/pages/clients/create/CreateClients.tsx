@@ -25,7 +25,7 @@ const formSchema = z.object({
     email: z.string().email({
         message: "Please enter a valid email address.",
     }),
-    phone: z.string().min(10, {
+    phone: z.string().length(10, {
         message: "Phone number must be at least 10 digits.",
     }),
     purchase_order: z.instanceof(File).optional(),
@@ -48,6 +48,47 @@ export function CreateClients() {
         },
     });
 
+    function handleFormSubmit(data: z.infer<typeof formSchema>) {
+        const formData = new FormData();
+        formData.append("company_name", data.company_name);
+        formData.append("client_name", data.client_name);
+        formData.append("email", data.email);
+        formData.append("phone", data.phone);
+
+        if (data.purchase_order) {
+            formData.append("purchase_order", data.purchase_order);
+        }
+
+        if (data.invoice) {
+            data.invoice.forEach((file) => {
+                formData.append("invoice[]", file);
+            });
+        }
+
+        if (data.handing_over_report) {
+            formData.append("handing_over_report", data.handing_over_report);
+        }
+
+        if (data.pms_reports) {
+            data.pms_reports.forEach((file) => {
+                formData.append("pms_reports[]", file);
+            });
+        }
+
+        fetch("http://192.168.0.31:8080/v1/clients", {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => {
+                if (!response.ok)
+                    throw new Error("Network response was not ok");
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                alert("An error occurred while submitting the form.");
+            });
+    }
+
     return (
         <div className="mx-auto mt-15 max-w-2xl rounded-lg bg-white p-6 shadow-xl/30">
             <div className="flex flex-col items-start justify-between gap-4">
@@ -58,8 +99,7 @@ export function CreateClients() {
             </div>
             <Form {...form}>
                 <form
-                    action="http://localhost:8080/v1/clients"
-                    method="POST"
+                    onSubmit={form.handleSubmit(handleFormSubmit)}
                     encType="multipart/form-data"
                     className="space-y-6">
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
