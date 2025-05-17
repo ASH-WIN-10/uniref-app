@@ -1,58 +1,54 @@
-import { useState } from "react";
 import Addclients from "./Addclients";
+import { useQuery } from "@tanstack/react-query";
 
-const clientsData = [
-    "Alice Johnson",
-    "Bob Smith",
-    "Charlie Davis",
-    "Diana Lopez",
-    "Edward Martin",
-];
+interface Client {
+    id: string;
+    company_name: string;
+}
+
+function useClients() {
+    return useQuery<Client[]>({
+        queryKey: ["clients"],
+        queryFn: async () => {
+            const response = await fetch("http://192.168.0.31:8080/v1/clients");
+            const data = await response.json();
+            return data.clients;
+        },
+    });
+}
 
 export default function Clients() {
-    const [search, setSearch] = useState("");
+    const { data: clients, isLoading, error } = useClients();
 
-    const filteredClients = clientsData.filter((client) =>
-        client.toLowerCase().includes(search.toLowerCase()),
-    );
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>Error loading clients</div>;
 
     return (
         <div className="mx-auto max-w-2xl p-6">
-            <h1 className="mb-4 text-2xl font-bold">Company List</h1>
-            <input
-                type="text"
-                placeholder="Search company..."
-                className="mb-4 w-full rounded-lg border border-gray-300 px-4 py-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-            />
-
-            <table className="min-w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
-                <thead className="bg-gray-100 text-left">
-                    <tr>
-                        <th className="px-6 py-3 text-sm font-medium text-gray-700">
-                            Company Name
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filteredClients.map((client, index) => (
-                        <tr key={index} className="border-t border-gray-200">
-                            <td className="px-6 py-3 text-gray-800 hover:bg-gray-100">
-                                {client}
-                            </td>
-                        </tr>
-                    ))}
-                    {filteredClients.length === 0 && (
+            <div className="mb-6 flex items-center justify-between">
+                <h1 className="text-2xl font-bold">Company List</h1>
+            </div>
+            <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
+                <table className="min-w-full">
+                    <thead className="bg-gray-50">
                         <tr>
-                            <td className="px-6 py-3 text-gray-500 italic">
-                                No clients found.
-                            </td>
+                            <th className="px-6 py-3 text-left text-lg font-semibold text-gray-700">
+                                Company Name
+                            </th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
-            <div className="absolute right-0 bottom-4 flex">
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                        {clients?.map((client) => (
+                            <tr key={client.id} className="hover:bg-gray-50">
+                                <td className="px-6 py-4 text-sm text-gray-900">
+                                    {client.company_name}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            <div className="absolute right-0 bottom-0 mb-4">
                 <Addclients />
             </div>
         </div>
