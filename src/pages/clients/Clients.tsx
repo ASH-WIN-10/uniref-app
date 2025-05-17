@@ -1,6 +1,6 @@
 import Addclients from "./Addclients";
 import { useQuery } from "@tanstack/react-query";
-import { SearchIcon } from "lucide-react";
+import { SearchIcon, RefreshCcwIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 
@@ -73,7 +73,7 @@ const SearchBar = ({
                 onClick={handleRefresh}
                 className="rounded-lg bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
                 title="Refresh list">
-                ↻
+                <RefreshCcwIcon className="h-5 w-5" />
             </button>
         </div>
     );

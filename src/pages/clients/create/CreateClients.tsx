@@ -16,6 +16,14 @@ import BackButton from "@/components/custom/BackButton";
 import { FileUploadField } from "./FileUploadField";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
+import { IndiaStates } from "./stateData";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
     company_name: z.string().min(2, {
@@ -30,28 +38,43 @@ const formSchema = z.object({
     phone: z.string().length(10, {
         message: "Phone number must be only 10 digits.",
     }),
+    state: z.string().min(1, {
+        message: "Please select a state.",
+    }),
+    district: z.string().min(1, {
+        message: "Please select a district.",
+    }),
     purchase_order: z.instanceof(File).optional(),
     invoice: z.array(z.instanceof(File)).optional(),
     handing_over_report: z.instanceof(File).optional(),
     pms_reports: z.array(z.instanceof(File)).optional(),
 });
 
+type FormData = z.infer<typeof formSchema>;
+
 export function CreateClients() {
     const navigate = useNavigate();
     const [uploadedInvoices, setUploadedInvoices] = useState<File[]>([]);
     const [uploadedPmsReports, setUploadedPmsReports] = useState<File[]>([]);
+    const [selectedState, setSelectedState] = useState<string>("");
 
-    const form = useForm<z.infer<typeof formSchema>>({
+    const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             company_name: "",
             client_name: "",
             email: "",
             phone: "",
+            state: "",
+            district: "",
         },
     });
 
-    function handleFormSubmit(data: z.infer<typeof formSchema>) {
+    const selectedStateData = IndiaStates.find(
+        (s) => s.state === selectedState,
+    );
+
+    function handleFormSubmit(data: FormData) {
         const formData = new FormData();
         formData.append("company_name", data.company_name);
         formData.append("client_name", data.client_name);
@@ -192,6 +215,81 @@ export function CreateClients() {
                                             className="w-full"
                                         />
                                     </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="state"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-gray-700">
+                                        State
+                                    </FormLabel>
+                                    <Select
+                                        onValueChange={(value) => {
+                                            field.onChange(value);
+                                            setSelectedState(value);
+                                            form.setValue("district", ""); // Reset district when state changes
+                                        }}
+                                        defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a state" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {IndiaStates.map((state) => (
+                                                <SelectItem
+                                                    key={state.state}
+                                                    value={state.state}>
+                                                    {state.state}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="district"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-gray-700">
+                                        District
+                                    </FormLabel>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                        disabled={!selectedState}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue
+                                                    placeholder={
+                                                        selectedState
+                                                            ? "Select a district"
+                                                            : "Select a state first"
+                                                    }
+                                                />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {selectedStateData?.districts.map(
+                                                (district) => (
+                                                    <SelectItem
+                                                        key={district}
+                                                        value={district}>
+                                                        {district}
+                                                    </SelectItem>
+                                                ),
+                                            )}
+                                        </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                 </FormItem>
                             )}
