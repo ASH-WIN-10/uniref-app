@@ -64,7 +64,7 @@ export function CreateClients() {
 
         if (data.invoice) {
             data.invoice.forEach((file) => {
-                formData.append("invoice[]", file);
+                formData.append("invoice", file);
             });
         }
 
@@ -74,7 +74,7 @@ export function CreateClients() {
 
         if (data.pms_reports) {
             data.pms_reports.forEach((file) => {
-                formData.append("pms_reports[]", file);
+                formData.append("pms_report", file);
             });
         }
 
