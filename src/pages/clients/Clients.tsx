@@ -1,6 +1,6 @@
 import Addclients from "./Addclients";
 import { useQuery } from "@tanstack/react-query";
-
+import { useNavigate } from "react-router";
 interface Client {
     id: string;
     company_name: string;
@@ -19,6 +19,7 @@ function useClients() {
 
 export default function Clients() {
     const { data: clients, isLoading, error } = useClients();
+    const navigate = useNavigate();
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error loading clients</div>;
@@ -39,7 +40,12 @@ export default function Clients() {
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                         {clients?.map((client) => (
-                            <tr key={client.id} className="hover:bg-gray-50">
+                            <tr
+                                onClick={() =>
+                                    navigate(`/clients/${client.id}`)
+                                }
+                                key={client.id}
+                                className="hover:bg-gray-50">
                                 <td className="px-6 py-4 text-sm text-gray-900">
                                     {client.company_name}
                                 </td>
