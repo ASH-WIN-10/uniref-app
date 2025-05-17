@@ -1,7 +1,19 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
-import { ExternalLink } from "lucide-react";
+import { useNavigate, useParams } from "react-router";
+import { ExternalLink, Trash2 } from "lucide-react";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 interface File {
     id: number;
@@ -29,6 +41,57 @@ async function getClient(clientId: number): Promise<Client> {
     }
     const data = await res.json();
     return data.client;
+}
+
+function DeleteClientButton({ clientId }: { clientId: number }) {
+    const navigate = useNavigate();
+
+    function deleteClient() {
+        fetch(`http://localhost:8080/v1/clients/${clientId}`, {
+            method: "DELETE",
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .catch((error) => {
+                console.error("Error deleting client:", error);
+            })
+            .finally(() => {
+                toast.success("Client deleted successfully");
+                navigate("/clients");
+            });
+    }
+
+    return (
+        <AlertDialog>
+            <AlertDialogTrigger className="rounded-lg bg-red-500 p-2 text-white transition-colors hover:bg-red-600">
+                <Trash2 className="h-5 w-5" />
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>
+                        Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete the client and remove their data from our
+                        servers.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                        className="bg-red-500 hover:bg-red-600"
+                        onClick={deleteClient}>
+                        Delete
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+    );
 }
 
 export default function ClientPage() {
@@ -78,9 +141,12 @@ export default function ClientPage() {
     return (
         <div className="container mx-auto max-w-6xl p-6">
             <div className="mb-6 rounded-lg bg-white p-6 shadow-md">
-                <h1 className="mb-4 text-3xl font-bold text-gray-800">
-                    {client.company_name}
-                </h1>
+                <div className="mb-4 flex items-center justify-between">
+                    <h1 className="text-3xl font-bold text-gray-800">
+                        {client.company_name}
+                    </h1>
+                    <DeleteClientButton clientId={clientId} />
+                </div>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
                         <p className="text-gray-600">
