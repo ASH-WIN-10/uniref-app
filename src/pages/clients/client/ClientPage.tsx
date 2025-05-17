@@ -14,7 +14,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-
+import BackButton from "@/components/custom/BackButton";
 interface File {
     id: number;
     created_at: string;
@@ -143,6 +143,9 @@ export default function ClientPage() {
 
     return (
         <div className="container mx-auto max-w-6xl p-6">
+            <div className="mb-6 flex items-center justify-between">
+                <BackButton />
+            </div>
             <div className="mb-6 rounded-lg bg-white p-6 shadow-md">
                 <div className="mb-4 flex items-center justify-between">
                     <h1 className="text-3xl font-bold text-gray-800">
@@ -228,7 +231,7 @@ export default function ClientPage() {
                                 </div>
                                 <a
                                     href={
-                                        "http://localhost:8080/" +
+                                        "http://192.168.0.31:8080/" +
                                         file.file_path
                                     }
                                     target="_blank"
