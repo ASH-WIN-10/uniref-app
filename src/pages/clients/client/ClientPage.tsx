@@ -44,7 +44,7 @@ export default function ClientPage() {
         isLoading,
         error,
     } = useQuery<Client>({
-        queryKey: ["client"],
+        queryKey: ["client", clientId],
         queryFn: () => getClient(clientId),
     });
 
