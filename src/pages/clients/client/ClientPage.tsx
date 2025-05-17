@@ -37,7 +37,8 @@ interface Client {
 async function getClient(clientId: number): Promise<Client> {
     const res = await fetch(`http://localhost:8080/v1/clients/${clientId}`);
     if (!res.ok) {
-        throw new Error("Network response was not ok");
+        if (res.status === 404) throw new Error("Client not found");
+        else throw new Error("Network response was not ok");
     }
     const data = await res.json();
     return data.client;
@@ -52,7 +53,9 @@ function DeleteClientButton({ clientId }: { clientId: number }) {
         })
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error("Network response was not ok");
+                    if (response.status === 404)
+                        throw new Error("Client not found");
+                    else throw new Error("Network response was not ok");
                 }
                 return response.json();
             })
