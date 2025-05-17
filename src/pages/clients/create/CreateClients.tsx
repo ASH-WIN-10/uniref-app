@@ -14,6 +14,8 @@ import {
 import { Input } from "@/components/ui/input";
 import BackButton from "@/components/custom/BackButton";
 import { FileUploadField } from "./FileUploadField";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 const formSchema = z.object({
     company_name: z.string().min(2, {
@@ -26,7 +28,7 @@ const formSchema = z.object({
         message: "Please enter a valid email address.",
     }),
     phone: z.string().length(10, {
-        message: "Phone number must be at least 10 digits.",
+        message: "Phone number must be only 10 digits.",
     }),
     purchase_order: z.instanceof(File).optional(),
     invoice: z.array(z.instanceof(File)).optional(),
@@ -35,6 +37,7 @@ const formSchema = z.object({
 });
 
 export function CreateClients() {
+    const navigate = useNavigate();
     const [uploadedInvoices, setUploadedInvoices] = useState<File[]>([]);
     const [uploadedPmsReports, setUploadedPmsReports] = useState<File[]>([]);
 
@@ -86,6 +89,10 @@ export function CreateClients() {
             .catch((error) => {
                 console.error("Error:", error);
                 alert("An error occurred while submitting the form.");
+            })
+            .finally(() => {
+                toast.success("Client created successfully");
+                navigate("/clients");
             });
     }
 
