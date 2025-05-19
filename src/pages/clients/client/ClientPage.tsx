@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams, Link } from "react-router";
-import { ExternalLink, Trash2, Pencil } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -16,8 +16,9 @@ import {
 import { toast } from "sonner";
 import BackButton from "@/components/custom/BackButton";
 import { Button } from "@/components/ui/button";
+import FileCard from "./FileCard";
 
-interface File {
+export interface File {
     id: number;
     created_at: string;
     original_file_name: string;
@@ -135,16 +136,6 @@ export default function ClientPage() {
             ? client.files
             : client.files.filter((file) => file.category === selectedCategory);
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        });
-    };
-
     return (
         <div className="container mx-auto max-w-6xl p-6">
             <div className="mb-6 flex items-center justify-between">
@@ -224,42 +215,7 @@ export default function ClientPage() {
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {filteredFiles.map((file) => (
-                        <div
-                            key={file.id}
-                            className="rounded-lg border p-4 transition-shadow hover:shadow-md">
-                            <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                    <h3 className="mb-1 truncate font-medium text-gray-800">
-                                        {file.original_file_name}
-                                    </h3>
-                                    <p className="mb-2 text-sm text-gray-500">
-                                        {formatDate(file.created_at)}
-                                    </p>
-                                    <span className="inline-block rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
-                                        {file.category
-                                            .split("_")
-                                            .map(
-                                                (word) =>
-                                                    word
-                                                        .charAt(0)
-                                                        .toUpperCase() +
-                                                    word.slice(1),
-                                            )
-                                            .join(" ")}
-                                    </span>
-                                </div>
-                                <a
-                                    href={
-                                        "http://192.168.0.31:8080/" +
-                                        file.file_path
-                                    }
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="ml-2 p-2 text-gray-600 transition-colors hover:text-blue-600">
-                                    <ExternalLink className="h-5 w-5" />
-                                </a>
-                            </div>
-                        </div>
+                        <FileCard file={file} key={file.id} />
                     ))}
                 </div>
 
