@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
-import { ExternalLink, Trash2 } from "lucide-react";
+import { ExternalLink, Trash2, Pencil } from "lucide-react";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import BackButton from "@/components/custom/BackButton";
+import { Button } from "@/components/ui/button";
 interface File {
     id: number;
     created_at: string;
@@ -31,6 +32,8 @@ interface Client {
     client_name: string;
     email: string;
     phone: string;
+    state: string;
+    city: string;
     files: File[];
 }
 
@@ -151,7 +154,12 @@ export default function ClientPage() {
                     <h1 className="text-3xl font-bold text-gray-800">
                         {client.company_name}
                     </h1>
-                    <DeleteClientButton clientId={clientId} />
+                    <div className="flex gap-8">
+                        <Button variant="outline" size="icon">
+                            <Pencil />
+                        </Button>
+                        <DeleteClientButton clientId={clientId} />
+                    </div>
                 </div>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
@@ -170,6 +178,14 @@ export default function ClientPage() {
                         <p className="text-gray-600">
                             <span className="font-semibold">Phone:</span>{" "}
                             {client.phone}
+                        </p>
+                        <p className="text-gray-600">
+                            <span className="font-semibold">State:</span>{" "}
+                            {client.state}
+                        </p>
+                        <p className="text-gray-600">
+                            <span className="font-semibold">City:</span>{" "}
+                            {client.city}
                         </p>
                     </div>
                 </div>
