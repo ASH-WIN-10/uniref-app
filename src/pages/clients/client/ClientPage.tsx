@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, Link } from "react-router";
 import { ExternalLink, Trash2, Pencil } from "lucide-react";
 import {
     AlertDialog,
@@ -16,6 +16,7 @@ import {
 import { toast } from "sonner";
 import BackButton from "@/components/custom/BackButton";
 import { Button } from "@/components/ui/button";
+
 interface File {
     id: number;
     created_at: string;
@@ -155,9 +156,11 @@ export default function ClientPage() {
                         {client.company_name}
                     </h1>
                     <div className="flex gap-8">
-                        <Button variant="outline" size="icon">
-                            <Pencil />
-                        </Button>
+                        <Link to={`/clients/${clientId}/edit`}>
+                            <Button variant="outline" size="icon">
+                                <Pencil />
+                            </Button>
+                        </Link>
                         <DeleteClientButton clientId={clientId} />
                     </div>
                 </div>
