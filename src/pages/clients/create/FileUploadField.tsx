@@ -40,7 +40,6 @@ export const FileUploadField = ({
     onFilesChange: (files: File[]) => void;
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [showFiles, setShowFiles] = useState(false);
 
     const validateFiles = (files: File[]) => {
         try {
@@ -104,18 +103,8 @@ export const FileUploadField = ({
                                 className="w-full">
                                 Choose File
                             </Button>
-                            {value.length > 0 && (
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setShowFiles(!showFiles)}
-                                    className="bg-primary text-sm text-white">
-                                    {showFiles ? "Hide Files" : "Show Files"}
-                                </Button>
-                            )}
 
-                            {showFiles && value.length > 0 && (
+                            {value.length > 0 && (
                                 <div className="mt-2 space-y-2 rounded-md border p-2">
                                     <div className="flex items-center justify-between border-b pb-2">
                                         <span className="font-medium">
