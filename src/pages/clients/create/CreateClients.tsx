@@ -127,246 +127,251 @@ export function CreateClients() {
     }
 
     return (
-        <div className="mx-auto mt-15 max-w-2xl rounded-lg bg-white p-6 shadow-xl/30">
-            <div className="flex flex-col items-start justify-between gap-4">
-                <BackButton />
-                <h2 className="mb-6 text-2xl font-bold text-gray-800">
-                    Add New Client
-                </h2>
-            </div>
-            <Form {...form}>
-                <form
-                    onSubmit={form.handleSubmit(handleFormSubmit)}
-                    encType="multipart/form-data"
-                    className="space-y-6">
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <FormField
-                            control={form.control}
-                            name="company_name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-gray-700">
-                                        Company Name
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Enter company name"
-                                            {...field}
-                                            className="w-full"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="client_name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-gray-700">
-                                        Client Name
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Enter client name"
-                                            {...field}
-                                            className="w-full"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-gray-700">
-                                        Email
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="email"
-                                            placeholder="Enter email address"
-                                            {...field}
-                                            className="w-full"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="phone"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-gray-700">
-                                        Phone Number
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="tel"
-                                            placeholder="Enter phone number"
-                                            {...field}
-                                            className="w-full"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="state"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-gray-700">
-                                        State
-                                    </FormLabel>
-                                    <Select
-                                        onValueChange={(value) => {
-                                            field.onChange(value);
-                                            setSelectedState(value);
-                                            form.setValue("city", "");
-                                        }}
-                                        defaultValue={field.value}>
+        <div className="py-10">
+            <div className="mx-auto max-w-2xl rounded-lg bg-white p-6 shadow-xl/30">
+                <div className="flex flex-col items-start justify-between gap-4">
+                    <BackButton />
+                    <h2 className="mb-6 text-2xl font-bold text-gray-800">
+                        Add New Client
+                    </h2>
+                </div>
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(handleFormSubmit)}
+                        encType="multipart/form-data"
+                        className="space-y-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <FormField
+                                control={form.control}
+                                name="company_name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-gray-700">
+                                            Company Name
+                                        </FormLabel>
                                         <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a state" />
-                                            </SelectTrigger>
+                                            <Input
+                                                placeholder="Enter company name"
+                                                {...field}
+                                                className="w-full"
+                                            />
                                         </FormControl>
-                                        <SelectContent>
-                                            {IndiaStates.map((state) => (
-                                                <SelectItem
-                                                    key={state.state}
-                                                    value={state.state}>
-                                                    {state.state}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="city"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="text-gray-700">
-                                        City
-                                    </FormLabel>
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        defaultValue={field.value}
-                                        disabled={!selectedState}>
+                            <FormField
+                                control={form.control}
+                                name="client_name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-gray-700">
+                                            Client Name
+                                        </FormLabel>
                                         <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue
-                                                    placeholder={
-                                                        selectedState
-                                                            ? "Select a city"
-                                                            : "Select a state first"
-                                                    }
-                                                />
-                                            </SelectTrigger>
+                                            <Input
+                                                placeholder="Enter client name"
+                                                {...field}
+                                                className="w-full"
+                                            />
                                         </FormControl>
-                                        <SelectContent>
-                                            {selectedStateData?.districts.map(
-                                                (city: string) => (
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-gray-700">
+                                            Email
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="email"
+                                                placeholder="Enter email address"
+                                                {...field}
+                                                className="w-full"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="phone"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-gray-700">
+                                            Phone Number
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="tel"
+                                                placeholder="Enter phone number"
+                                                {...field}
+                                                className="w-full"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="state"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-gray-700">
+                                            State
+                                        </FormLabel>
+                                        <Select
+                                            onValueChange={(value) => {
+                                                field.onChange(value);
+                                                setSelectedState(value);
+                                                form.setValue("city", "");
+                                            }}
+                                            defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a state" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {IndiaStates.map((state) => (
                                                     <SelectItem
-                                                        key={city}
-                                                        value={city}>
-                                                        {city}
+                                                        key={state.state}
+                                                        value={state.state}>
+                                                        {state.state}
                                                     </SelectItem>
-                                                ),
-                                            )}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FileUploadField
-                            name="purchase_order"
-                            label="Purchase Order"
-                            description="Upload only one PDF file"
-                            control={form.control}
-                            value={
-                                form.watch("purchase_order")
-                                    ? [form.watch("purchase_order") as File]
-                                    : []
-                            }
-                            onFilesChange={(files) =>
-                                form.setValue("purchase_order", files[0])
-                            }
-                        />
+                            <FormField
+                                control={form.control}
+                                name="city"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-gray-700">
+                                            City
+                                        </FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                            disabled={!selectedState}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue
+                                                        placeholder={
+                                                            selectedState
+                                                                ? "Select a city"
+                                                                : "Select a state first"
+                                                        }
+                                                    />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {selectedStateData?.districts.map(
+                                                    (city: string) => (
+                                                        <SelectItem
+                                                            key={city}
+                                                            value={city}>
+                                                            {city}
+                                                        </SelectItem>
+                                                    ),
+                                                )}
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FileUploadField
-                            name="invoice"
-                            label="Invoice"
-                            description="Select PDF files"
-                            multiple={true}
-                            control={form.control}
-                            value={uploadedInvoices}
-                            onFilesChange={(files) => {
-                                setUploadedInvoices(files);
-                                form.setValue("invoice", files);
-                            }}
-                        />
+                            <FileUploadField
+                                name="purchase_order"
+                                label="Purchase Order"
+                                description="Upload only one PDF file"
+                                control={form.control}
+                                value={
+                                    form.watch("purchase_order")
+                                        ? [form.watch("purchase_order") as File]
+                                        : []
+                                }
+                                onFilesChange={(files) =>
+                                    form.setValue("purchase_order", files[0])
+                                }
+                            />
 
-                        <FileUploadField
-                            name="handing_over_report"
-                            label="Handing Over Report"
-                            description="Upload only one PDF file"
-                            control={form.control}
-                            value={
-                                form.watch("handing_over_report")
-                                    ? [
-                                          form.watch(
-                                              "handing_over_report",
-                                          ) as File,
-                                      ]
-                                    : []
-                            }
-                            onFilesChange={(files) =>
-                                form.setValue("handing_over_report", files[0])
-                            }
-                        />
+                            <FileUploadField
+                                name="invoice"
+                                label="Invoice"
+                                description="Select PDF files"
+                                multiple={true}
+                                control={form.control}
+                                value={uploadedInvoices}
+                                onFilesChange={(files) => {
+                                    setUploadedInvoices(files);
+                                    form.setValue("invoice", files);
+                                }}
+                            />
 
-                        <FileUploadField
-                            name="pms_reports"
-                            label="PMS Reports"
-                            description="Select PDF files"
-                            multiple={true}
-                            control={form.control}
-                            value={uploadedPmsReports}
-                            onFilesChange={(files) => {
-                                setUploadedPmsReports(files);
-                                form.setValue("pms_reports", files);
-                            }}
-                        />
-                    </div>
+                            <FileUploadField
+                                name="handing_over_report"
+                                label="Handing Over Report"
+                                description="Upload only one PDF file"
+                                control={form.control}
+                                value={
+                                    form.watch("handing_over_report")
+                                        ? [
+                                              form.watch(
+                                                  "handing_over_report",
+                                              ) as File,
+                                          ]
+                                        : []
+                                }
+                                onFilesChange={(files) =>
+                                    form.setValue(
+                                        "handing_over_report",
+                                        files[0],
+                                    )
+                                }
+                            />
 
-                    <div className="flex justify-end">
-                        <Button
-                            type="submit"
-                            className="bg-primary hover:bg-primary/90 px-6 text-white">
-                            Submit
-                        </Button>
-                    </div>
-                </form>
-            </Form>
+                            <FileUploadField
+                                name="pms_reports"
+                                label="PMS Reports"
+                                description="Select PDF files"
+                                multiple={true}
+                                control={form.control}
+                                value={uploadedPmsReports}
+                                onFilesChange={(files) => {
+                                    setUploadedPmsReports(files);
+                                    form.setValue("pms_reports", files);
+                                }}
+                            />
+                        </div>
+
+                        <div className="flex justify-end">
+                            <Button
+                                type="submit"
+                                className="bg-primary hover:bg-primary/90 px-6 text-white">
+                                Submit
+                            </Button>
+                        </div>
+                    </form>
+                </Form>
+            </div>
         </div>
     );
 }

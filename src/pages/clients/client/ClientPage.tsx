@@ -147,9 +147,12 @@ export default function ClientPage() {
                     <h1 className="text-3xl font-bold text-gray-800">
                         {client.company_name}
                     </h1>
-                    <div className="flex gap-8">
+                    <div className="flex gap-2">
                         <Link to={`/clients/${clientId}/edit`}>
-                            <Button variant="outline" size="icon">
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="bg-gray-100 hover:bg-gray-200">
                                 <Pencil />
                             </Button>
                         </Link>

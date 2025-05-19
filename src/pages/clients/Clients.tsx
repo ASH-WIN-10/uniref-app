@@ -18,13 +18,13 @@ interface Client {
     city: string;
 }
 
-const SearchBar = ({
+function SearchBar({
     onSearch,
     initialClients,
 }: {
     onSearch: (clients: Client[], message?: string) => void;
     initialClients: Client[];
-}) => {
+}) {
     const [search, setSearch] = useState("");
     const [selectedState, setSelectedState] = useState<string>("all");
     const [selectedCity, setSelectedCity] = useState<string>("all");
@@ -70,13 +70,6 @@ const SearchBar = ({
         }
     }, [search, selectedState, selectedCity, initialClients, onSearch]);
 
-    const handleRefresh = useCallback(() => {
-        setSearch("");
-        setSelectedState("all");
-        setSelectedCity("all");
-        onSearch(initialClients);
-    }, [initialClients, onSearch]);
-
     const selectedStateData = useMemo(
         () => IndiaStates.find((s) => s.state === selectedState),
         [selectedState],
@@ -100,12 +93,6 @@ const SearchBar = ({
                 </div>
             </div>
             <div className="flex gap-4">
-                <button
-                    onClick={handleRefresh}
-                    className="bg-primary hover:bg-primary/80 rounded-lg px-4 py-2 text-white"
-                    title="Show all companies">
-                    All
-                </button>
                 <Select
                     value={selectedState}
                     onValueChange={(value) => {
@@ -150,7 +137,7 @@ const SearchBar = ({
             </div>
         </div>
     );
-};
+}
 
 export default function Clients() {
     const { data: initialClients, error } = useQuery<Client[]>({
@@ -181,16 +168,13 @@ export default function Clients() {
 
     return (
         <div className="mx-auto max-w-4xl p-6">
-            <div className="mb-6 flex items-center justify-between">
-                <h1 className="text-2xl font-bold">Company List</h1>
-            </div>
             <SearchBar
                 onSearch={handleSearch}
                 initialClients={initialClients || []}
             />
             <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
                 <table className="min-w-full">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-gray-200">
                         <tr>
                             <th className="px-6 py-3 text-left text-lg font-semibold text-gray-700">
                                 Company Name
