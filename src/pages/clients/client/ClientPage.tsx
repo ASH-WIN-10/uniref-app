@@ -18,6 +18,7 @@ import BackButton from "@/components/custom/BackButton";
 import { Button } from "@/components/ui/button";
 import FileCard from "./FileCard";
 import AddFile from "./AddFileDialog";
+import LoadingScreen from "@/components/custom/LoadingScreen";
 
 export interface File {
     id: number;
@@ -120,7 +121,7 @@ export default function ClientPage() {
         queryFn: () => getClient(clientId),
     });
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <LoadingScreen />;
     if (error) return <div>Error: {error.message}</div>;
     if (!client) return <div>Client not found</div>;
 

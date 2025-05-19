@@ -10,6 +10,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import LoadingScreen from "@/components/custom/LoadingScreen";
 
 interface Client {
     id: string;
@@ -140,7 +141,11 @@ function SearchBar({
 }
 
 export default function Clients() {
-    const { data: initialClients, error } = useQuery<Client[]>({
+    const {
+        data: initialClients,
+        isLoading,
+        error,
+    } = useQuery<Client[]>({
         queryKey: ["clients"],
         queryFn: async () => {
             const response = await fetch("http://192.168.0.31:8080/v1/clients");
@@ -164,6 +169,7 @@ export default function Clients() {
         setMessage(message);
     }, []);
 
+    if (isLoading) return <LoadingScreen />;
     if (error) return <div>Error loading clients</div>;
 
     return (

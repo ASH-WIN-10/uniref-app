@@ -24,6 +24,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
+import LoadingScreen from "@/components/custom/LoadingScreen";
 
 const formSchema = z.object({
     company_name: z.string().min(2, {
@@ -160,7 +161,7 @@ export default function EditClient() {
             });
     }
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <LoadingScreen />;
     if (error) return <div>Error loading client data</div>;
     if (!client) return <div>Client not found</div>;
 
