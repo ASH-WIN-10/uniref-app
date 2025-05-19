@@ -98,17 +98,6 @@ const SearchBar = ({
                         onChange={(e) => setSearch(e.target.value)}
                         className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                     />
-                    <button
-                        onClick={handleSearch}
-                        className="rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
-                        <SearchIcon className="h-5 w-5" />
-                    </button>
-                    <button
-                        onClick={handleRefresh}
-                        className="rounded-lg bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
-                        title="Show all companies">
-                        <RefreshCcwIcon className="h-5 w-5" />
-                    </button>
                 </div>
             </div>
             <div className="flex gap-4">
