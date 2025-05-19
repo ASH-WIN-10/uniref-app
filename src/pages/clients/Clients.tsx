@@ -1,7 +1,7 @@
 import Addclients from "./Addclients";
 import { useQuery } from "@tanstack/react-query";
 import { SearchIcon, RefreshCcwIcon } from "lucide-react";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { IndiaStates } from "./create/stateData";
 import {
@@ -32,54 +32,39 @@ const SearchBar = ({
 
     const handleSearch = useCallback(async () => {
         try {
-            let filteredClients = initialClients;
+            const queryParams = new URLSearchParams();
 
             if (search.trim()) {
-                filteredClients = filteredClients.filter((client) =>
-                    client.company_name
-                        .toLowerCase()
-                        .includes(search.toLowerCase()),
-                );
+                queryParams.append("company_name", search.toLowerCase());
             }
             if (selectedState !== "all") {
-                filteredClients = filteredClients.filter(
-                    (client) => client.state === selectedState,
-                );
+                queryParams.append("state", selectedState);
             }
             if (selectedCity !== "all") {
-                filteredClients = filteredClients.filter(
-                    (client) => client.city === selectedCity,
-                );
+                queryParams.append("city", selectedCity);
             }
 
             if (
-                filteredClients.length === 0 &&
-                (search.trim() ||
-                    selectedState !== "all" ||
-                    selectedCity !== "all")
+                search.trim() ||
+                selectedState !== "all" ||
+                selectedCity !== "all"
             ) {
-                const queryParams = new URLSearchParams();
-                if (search.trim())
-                    queryParams.append("company_name", search.toLowerCase());
-                if (selectedState !== "all")
-                    queryParams.append("state", selectedState);
-                if (selectedCity !== "all")
-                    queryParams.append("city", selectedCity);
-
                 const response = await fetch(
                     `http://192.168.0.31:8080/v1/clients?${queryParams.toString()}`,
                 );
 
                 if (!response.ok) throw new Error("Search failed");
                 const data = await response.json();
-                filteredClients = data.clients || [];
-            }
+                const filteredClients = data.clients || [];
 
-            const message =
-                filteredClients.length === 0
-                    ? "No companies found matching your filters"
-                    : undefined;
-            onSearch(filteredClients, message);
+                const message =
+                    filteredClients.length === 0
+                        ? "No companies found matching your filters"
+                        : undefined;
+                onSearch(filteredClients, message);
+            } else {
+                onSearch(initialClients);
+            }
         } catch (error) {
             console.error("Search failed:", error);
             onSearch([], "Error loading companies");
@@ -98,16 +83,9 @@ const SearchBar = ({
         [selectedState],
     );
 
-    // Debounced search effect
-    const debouncedSearch = useCallback(() => {
-        const timeoutId = setTimeout(handleSearch, 300);
-        return () => clearTimeout(timeoutId);
-    }, [handleSearch]);
-
-    // Only trigger search when filters change
-    useCallback(() => {
-        debouncedSearch();
-    }, [debouncedSearch, search, selectedState, selectedCity]);
+    useEffect(() => {
+        handleSearch();
+    }, [handleSearch, selectedState, selectedCity]);
 
     return (
         <div className="mb-4 space-y-4">
@@ -194,7 +172,6 @@ export default function Clients() {
             const data = await response.json();
             return data.clients;
         },
-        staleTime: 5 * 60 * 1000,
     });
 
     const [displayedClients, setDisplayedClients] = useState<Client[]>([]);
