@@ -41,7 +41,7 @@ const formSchema = z.object({
     state: z.string().min(1, {
         message: "Please select a state.",
     }),
-    district: z.string().min(1, {
+    city: z.string().min(1, {
         message: "Please select a district.",
     }),
     purchase_order: z.instanceof(File).optional(),
@@ -66,7 +66,7 @@ export function CreateClients() {
             email: "",
             phone: "",
             state: "",
-            district: "",
+            city: "",
         },
     });
 
@@ -80,6 +80,8 @@ export function CreateClients() {
         formData.append("client_name", data.client_name);
         formData.append("email", data.email);
         formData.append("phone", data.phone);
+        formData.append("state", data.state);
+        formData.append("city", data.city);
 
         if (data.purchase_order) {
             formData.append("purchase_order", data.purchase_order);
@@ -232,7 +234,7 @@ export function CreateClients() {
                                         onValueChange={(value) => {
                                             field.onChange(value);
                                             setSelectedState(value);
-                                            form.setValue("district", ""); // Reset district when state changes
+                                            form.setValue("city", "");
                                         }}
                                         defaultValue={field.value}>
                                         <FormControl>
@@ -257,11 +259,11 @@ export function CreateClients() {
 
                         <FormField
                             control={form.control}
-                            name="district"
+                            name="city"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-gray-700">
-                                        District
+                                        City
                                     </FormLabel>
                                     <Select
                                         onValueChange={field.onChange}
@@ -272,7 +274,7 @@ export function CreateClients() {
                                                 <SelectValue
                                                     placeholder={
                                                         selectedState
-                                                            ? "Select a district"
+                                                            ? "Select a city"
                                                             : "Select a state first"
                                                     }
                                                 />
@@ -280,11 +282,11 @@ export function CreateClients() {
                                         </FormControl>
                                         <SelectContent>
                                             {selectedStateData?.districts.map(
-                                                (district) => (
+                                                (city: string) => (
                                                     <SelectItem
-                                                        key={district}
-                                                        value={district}>
-                                                        {district}
+                                                        key={city}
+                                                        value={city}>
+                                                        {city}
                                                     </SelectItem>
                                                 ),
                                             )}
