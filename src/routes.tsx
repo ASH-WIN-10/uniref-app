@@ -4,12 +4,13 @@ import ClientPage from "./pages/clients/client/ClientPage";
 import { Link } from "react-router";
 import Clients from "./pages/clients/Clients";
 import EditClient from "./pages/clients/edit/EditClient";
+import NotFound from "./pages/misc/NotFound";
 
 const routes = [
     {
         path: "/",
         element: <App />,
-        errorElement: <Link to="/">Go to home</Link>,
+        errorElement: <NotFound />,
         children: [
             {
                 index: true,
