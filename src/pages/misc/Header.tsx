@@ -1,8 +1,10 @@
+import { Link } from "react-router";
+
 const Header = () => {
     return (
         <div className="bg-primary sticky top-0 z-50 flex items-center justify-between p-4">
-            <h1 className="text-2xl font-bold text-white">
-                Himwan Refrigerations
+            <h1 className="text-4xl font-bold text-white">
+                <Link to="/">Uni-ref</Link>
             </h1>
         </div>
     );
