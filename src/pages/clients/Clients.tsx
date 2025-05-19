@@ -1,4 +1,4 @@
-import Addclients from "./Addclients";
+import AddClientButton from "./AddClientButton";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router";
@@ -236,7 +236,7 @@ export default function Clients() {
                 </table>
             </div>
             <div className="absolute right-0 bottom-0 mb-4">
-                <Addclients />
+                <AddClientButton />
             </div>
         </div>
     );
