@@ -167,7 +167,7 @@ export default function EditClient() {
     return (
         <div className="mx-auto mt-15 max-w-2xl rounded-lg bg-white p-6 shadow-xl/30">
             <div className="flex flex-col items-start justify-between gap-4">
-                <BackButton />
+                <BackButton to={`/clients/${clientId}`} />
                 <h2 className="mb-6 text-2xl font-bold text-gray-800">
                     Edit Client
                 </h2>
