@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import BackButton from "@/components/custom/BackButton";
 import { Button } from "@/components/ui/button";
 import FileCard from "./FileCard";
+import AddFile from "./AddFileDialog";
 
 export interface File {
     id: number;
@@ -187,9 +188,14 @@ export default function ClientPage() {
 
             <div className="rounded-lg bg-white p-6 shadow-md">
                 <div className="mb-6 flex items-center justify-between">
-                    <h2 className="text-2xl font-semibold text-gray-800">
-                        Documents
-                    </h2>
+                    <div className="flex items-center gap-2">
+                        <h2 className="text-2xl font-semibold text-gray-800">
+                            Documents
+                        </h2>
+                        <div className="flex gap-2">
+                            <AddFile clientId={clientId} />
+                        </div>
+                    </div>
                     <div className="flex gap-2">
                         {categories.map((category) => (
                             <button
