@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { FileText, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
