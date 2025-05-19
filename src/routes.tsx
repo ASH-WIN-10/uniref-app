@@ -1,7 +1,6 @@
 import App from "./App";
 import { CreateClients } from "./pages/clients/create/CreateClients";
 import ClientPage from "./pages/clients/client/ClientPage";
-import { Link } from "react-router";
 import Clients from "./pages/clients/Clients";
 import EditClient from "./pages/clients/edit/EditClient";
 import NotFound from "./pages/misc/NotFound";
@@ -14,10 +13,6 @@ const routes = [
         children: [
             {
                 index: true,
-                element: <Link to="/clients">Clients</Link>,
-            },
-            {
-                path: "clients",
                 element: <Clients />,
             },
             {
