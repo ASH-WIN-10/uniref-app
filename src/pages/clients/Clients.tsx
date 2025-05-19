@@ -195,7 +195,7 @@ export default function Clients() {
                                         navigate(`/clients/${client.id}`)
                                     }
                                     key={client.id}
-                                    className="cursor-pointer hover:bg-gray-50">
+                                    className="hover:bg-gray-50">
                                     <td className="px-6 py-4 text-sm text-gray-900">
                                         {client.company_name}
                                     </td>
