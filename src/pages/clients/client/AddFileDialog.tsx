@@ -33,7 +33,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 const fileFormSchema = z.object({
     category: z.enum(
-        ["invoice", "purchase_order", "handing_over_report", "pms_reports"],
+        ["invoice", "purchase_order", "handing_over_report", "pms_report"],
         {
             required_error: "Please select a category",
         },
@@ -131,8 +131,8 @@ function AddFileDialog({ clientId }: { clientId: number }) {
                                             <SelectItem value="handing_over_report">
                                                 Handing Over Report
                                             </SelectItem>
-                                            <SelectItem value="pms_reports">
-                                                PMS Reports
+                                            <SelectItem value="pms_report">
+                                                PMS Report
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
