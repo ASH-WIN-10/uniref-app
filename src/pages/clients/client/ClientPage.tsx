@@ -70,7 +70,7 @@ function DeleteClientButton({ clientId }: { clientId: number }) {
             })
             .finally(() => {
                 toast.success("Client deleted successfully");
-                navigate("/clients");
+                navigate("/");
             });
     }
 
