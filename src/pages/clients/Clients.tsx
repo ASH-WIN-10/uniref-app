@@ -125,7 +125,7 @@ const SearchBar = ({
             <div className="flex gap-4">
                 <button
                     onClick={handleRefresh}
-                    className="rounded-lg bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
+                    className="bg-primary hover:bg-primary/80 rounded-lg px-4 py-2 text-white"
                     title="Show all companies">
                     All
                 </button>
