@@ -1,7 +1,7 @@
 import Addclients from "./Addclients";
 import { useQuery } from "@tanstack/react-query";
 import { SearchIcon, RefreshCcwIcon } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { IndiaStates } from "./create/stateData";
 import {
@@ -30,72 +30,84 @@ const SearchBar = ({
     const [selectedState, setSelectedState] = useState<string>("all");
     const [selectedCity, setSelectedCity] = useState<string>("all");
 
-    const handleSearch = async () => {
+    const handleSearch = useCallback(async () => {
         try {
-            let queryParams = new URLSearchParams();
+            let filteredClients = initialClients;
 
             if (search.trim()) {
-                queryParams.append("company_name", search.toLowerCase());
-            }
-            if (selectedState && selectedState !== "all") {
-                queryParams.append("state", selectedState);
-            }
-            if (selectedCity && selectedCity !== "all") {
-                queryParams.append("city", selectedCity);
-            }
-
-            const response = await fetch(
-                `http://192.168.0.31:8080/v1/clients?${queryParams.toString()}`,
-            );
-
-            if (!response.ok) {
-                throw new Error("Search failed");
-            }
-
-            const data = await response.json();
-            let filteredClients = data.clients || [];
-
-            if (search.trim()) {
-                filteredClients = filteredClients.filter((client: Client) =>
+                filteredClients = filteredClients.filter((client) =>
                     client.company_name
                         .toLowerCase()
-                        .startsWith(search.toLowerCase()),
+                        .includes(search.toLowerCase()),
+                );
+            }
+            if (selectedState !== "all") {
+                filteredClients = filteredClients.filter(
+                    (client) => client.state === selectedState,
+                );
+            }
+            if (selectedCity !== "all") {
+                filteredClients = filteredClients.filter(
+                    (client) => client.city === selectedCity,
                 );
             }
 
             if (
-                selectedState !== "all" ||
-                selectedCity !== "all" ||
-                search.trim()
+                filteredClients.length === 0 &&
+                (search.trim() ||
+                    selectedState !== "all" ||
+                    selectedCity !== "all")
             ) {
-                const message =
-                    filteredClients.length === 0
-                        ? "No companies found matching your filters"
-                        : undefined;
-                onSearch(filteredClients, message);
-            } else {
-                onSearch(initialClients);
+                const queryParams = new URLSearchParams();
+                if (search.trim())
+                    queryParams.append("company_name", search.toLowerCase());
+                if (selectedState !== "all")
+                    queryParams.append("state", selectedState);
+                if (selectedCity !== "all")
+                    queryParams.append("city", selectedCity);
+
+                const response = await fetch(
+                    `http://192.168.0.31:8080/v1/clients?${queryParams.toString()}`,
+                );
+
+                if (!response.ok) throw new Error("Search failed");
+                const data = await response.json();
+                filteredClients = data.clients || [];
             }
+
+            const message =
+                filteredClients.length === 0
+                    ? "No companies found matching your filters"
+                    : undefined;
+            onSearch(filteredClients, message);
         } catch (error) {
             console.error("Search failed:", error);
             onSearch([], "Error loading companies");
         }
-    };
+    }, [search, selectedState, selectedCity, initialClients, onSearch]);
 
-    const handleRefresh = () => {
+    const handleRefresh = useCallback(() => {
         setSearch("");
         setSelectedState("all");
         setSelectedCity("all");
         onSearch(initialClients);
-    };
+    }, [initialClients, onSearch]);
 
-    const selectedStateData = IndiaStates.find(
-        (s) => s.state === selectedState,
+    const selectedStateData = useMemo(
+        () => IndiaStates.find((s) => s.state === selectedState),
+        [selectedState],
     );
 
-    useEffect(() => {
-        handleSearch();
-    }, [selectedState, selectedCity]);
+    // Debounced search effect
+    const debouncedSearch = useCallback(() => {
+        const timeoutId = setTimeout(handleSearch, 300);
+        return () => clearTimeout(timeoutId);
+    }, [handleSearch]);
+
+    // Only trigger search when filters change
+    useCallback(() => {
+        debouncedSearch();
+    }, [debouncedSearch, search, selectedState, selectedCity]);
 
     return (
         <div className="mb-4 space-y-4">
@@ -106,7 +118,6 @@ const SearchBar = ({
                         placeholder="Search companies..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                         className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                     />
                     <button
@@ -175,33 +186,31 @@ const SearchBar = ({
     );
 };
 
-function useClients() {
-    return useQuery<Client[]>({
+export default function Clients() {
+    const { data: initialClients, error } = useQuery<Client[]>({
         queryKey: ["clients"],
         queryFn: async () => {
             const response = await fetch("http://192.168.0.31:8080/v1/clients");
             const data = await response.json();
             return data.clients;
         },
+        staleTime: 5 * 60 * 1000,
     });
-}
 
-export default function Clients() {
-    const { data: initialClients, error } = useClients();
     const [displayedClients, setDisplayedClients] = useState<Client[]>([]);
     const [message, setMessage] = useState<string | undefined>();
     const navigate = useNavigate();
 
-    useEffect(() => {
+    useMemo(() => {
         if (initialClients) {
             setDisplayedClients(initialClients);
         }
     }, [initialClients]);
 
-    const handleSearch = (clients: Client[], message?: string) => {
+    const handleSearch = useCallback((clients: Client[], message?: string) => {
         setDisplayedClients(clients);
         setMessage(message);
-    };
+    }, []);
 
     if (error) return <div>Error loading clients</div>;
 
