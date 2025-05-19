@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import { FileText, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { z } from "zod";
+import { toast } from "sonner";
 import {
     FormControl,
     FormField,
@@ -9,6 +11,16 @@ import {
     FormMessage,
     FormDescription,
 } from "@/components/ui/form";
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+const FileSchema = z.object({
+    name: z.string(),
+    size: z.number().max(MAX_FILE_SIZE, "File size must be less than 10MB"),
+    type: z.string().refine((type) => type === "application/pdf", {
+        message: "Only PDF files are allowed",
+    }),
+});
 
 export const FileUploadField = ({
     name,
@@ -29,6 +41,25 @@ export const FileUploadField = ({
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [showFiles, setShowFiles] = useState(false);
+
+    const validateFiles = (files: File[]) => {
+        try {
+            files.forEach((file) => {
+                FileSchema.parse({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                });
+            });
+            return true;
+        } catch (error) {
+            if (error instanceof z.ZodError) {
+                const errorMessage = error.errors[0]?.message || "Invalid file";
+                toast.error(errorMessage);
+            }
+            return false;
+        }
+    };
 
     return (
         <FormField
@@ -51,7 +82,14 @@ export const FileUploadField = ({
                                             : files[0]
                                               ? [files[0]]
                                               : [];
-                                        onFilesChange(newFiles);
+
+                                        if (validateFiles(newFiles)) {
+                                            onFilesChange(newFiles);
+                                        } else {
+                                            if (fileInputRef.current) {
+                                                fileInputRef.current.value = "";
+                                            }
+                                        }
                                     }
                                 }}
                                 className="hidden"

@@ -1,6 +1,5 @@
 import Addclients from "./Addclients";
 import { useQuery } from "@tanstack/react-query";
-import { SearchIcon, RefreshCcwIcon } from "lucide-react";
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { IndiaStates } from "./create/stateData";
