@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { IndiaStates } from "./create/stateData";
+import { segment } from "./create/segment";
 import {
     Select,
     SelectContent,
@@ -17,6 +18,7 @@ interface Client {
     company_name: string;
     state: string;
     city: string;
+    segment: string;
 }
 
 function SearchBar({
@@ -27,6 +29,7 @@ function SearchBar({
     initialClients: Client[];
 }) {
     const [search, setSearch] = useState("");
+    const [selectedSegment, setSelectedSegment] = useState<string>("all");
     const [selectedState, setSelectedState] = useState<string>("all");
     const [selectedCity, setSelectedCity] = useState<string>("all");
 
@@ -37,6 +40,9 @@ function SearchBar({
             if (search.trim()) {
                 queryParams.append("company_name", search.toLowerCase());
             }
+            if (selectedSegment !== "all") {
+                queryParams.append("segment", selectedSegment);
+            }
             if (selectedState !== "all") {
                 queryParams.append("state", selectedState);
             }
@@ -46,6 +52,7 @@ function SearchBar({
 
             if (
                 search.trim() ||
+                selectedSegment !== "all" ||
                 selectedState !== "all" ||
                 selectedCity !== "all"
             ) {
@@ -69,7 +76,14 @@ function SearchBar({
             console.error("Search failed:", error);
             onSearch([], "Error loading companies");
         }
-    }, [search, selectedState, selectedCity, initialClients, onSearch]);
+    }, [
+        search,
+        selectedSegment,
+        selectedState,
+        selectedCity,
+        initialClients,
+        onSearch,
+    ]);
 
     const selectedStateData = useMemo(
         () => IndiaStates.find((s) => s.state === selectedState),
@@ -78,7 +92,7 @@ function SearchBar({
 
     useEffect(() => {
         handleSearch();
-    }, [handleSearch, selectedState, selectedCity]);
+    }, [handleSearch, selectedSegment, selectedState, selectedCity]);
 
     return (
         <div className="mb-4 space-y-4">
@@ -94,6 +108,22 @@ function SearchBar({
                 </div>
             </div>
             <div className="flex gap-4">
+                <Select
+                    value={selectedSegment}
+                    onValueChange={setSelectedSegment}>
+                    <SelectTrigger className="w-[200px]">
+                        <SelectValue placeholder="Select Segment" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Segments</SelectItem>
+                        {segment.map((seg) => (
+                            <SelectItem key={seg} value={seg}>
+                                {seg}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+
                 <Select
                     value={selectedState}
                     onValueChange={(value) => {
@@ -186,6 +216,9 @@ export default function Clients() {
                                 Company Name
                             </th>
                             <th className="px-6 py-3 text-left text-lg font-semibold text-gray-700">
+                                Segment
+                            </th>
+                            <th className="px-6 py-3 text-left text-lg font-semibold text-gray-700">
                                 State
                             </th>
                             <th className="px-6 py-3 text-left text-lg font-semibold text-gray-700">
@@ -206,6 +239,9 @@ export default function Clients() {
                                         {client.company_name}
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-900">
+                                        {client.segment}
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-gray-900">
                                         {client.state}
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-900">
@@ -216,7 +252,7 @@ export default function Clients() {
                         ) : (
                             <tr>
                                 <td
-                                    colSpan={3}
+                                    colSpan={4}
                                     className="px-6 py-4 text-center text-sm text-gray-500">
                                     {message || "No companies available"}
                                 </td>

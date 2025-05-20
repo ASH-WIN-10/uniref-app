@@ -17,6 +17,7 @@ import { FileUploadField } from "./FileUploadField";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import { IndiaStates } from "./stateData";
+import { segment } from "./segment";
 import {
     Select,
     SelectContent,
@@ -44,6 +45,9 @@ const formSchema = z.object({
     city: z.string().min(1, {
         message: "Please select a district.",
     }),
+    segment: z.string().min(1, {
+        message: "Please select a segment.",
+    }),
     purchase_order: z.instanceof(File).optional(),
     invoice: z.array(z.instanceof(File)).optional(),
     handing_over_report: z.instanceof(File).optional(),
@@ -67,6 +71,7 @@ export function CreateClients() {
             phone: "",
             state: "",
             city: "",
+            segment: "",
         },
     });
 
@@ -82,6 +87,7 @@ export function CreateClients() {
         formData.append("phone", data.phone);
         formData.append("state", data.state);
         formData.append("city", data.city);
+        formData.append("segment", data.segment);
 
         if (data.purchase_order) {
             formData.append("purchase_order", data.purchase_order);
@@ -129,9 +135,9 @@ export function CreateClients() {
     return (
         <div className="py-10">
             <div className="mx-auto max-w-2xl rounded-lg bg-white p-6 shadow-xl/30">
-                <div className="flex flex-col items-start justify-between gap-4">
+                <div className="mb-6 flex flex-col items-start justify-between gap-4">
                     <BackButton />
-                    <h2 className="mb-6 text-2xl font-bold text-gray-800">
+                    <h2 className="text-2xl font-bold text-gray-800">
                         Add New Client
                     </h2>
                 </div>
@@ -298,71 +304,113 @@ export function CreateClients() {
                                 )}
                             />
 
-                            <FileUploadField
-                                name="purchase_order"
-                                label="Purchase Order"
-                                description="Upload only one PDF file"
+                            <FormField
                                 control={form.control}
-                                value={
-                                    form.watch("purchase_order")
-                                        ? [form.watch("purchase_order") as File]
-                                        : []
-                                }
-                                onFilesChange={(files) =>
-                                    form.setValue("purchase_order", files[0])
-                                }
-                            />
-
-                            <FileUploadField
-                                name="invoice"
-                                label="Invoice"
-                                description="Select PDF files"
-                                multiple={true}
-                                control={form.control}
-                                value={uploadedInvoices}
-                                onFilesChange={(files) => {
-                                    setUploadedInvoices(files);
-                                    form.setValue("invoice", files);
-                                }}
-                            />
-
-                            <FileUploadField
-                                name="handing_over_report"
-                                label="Handing Over Report"
-                                description="Upload only one PDF file"
-                                control={form.control}
-                                value={
-                                    form.watch("handing_over_report")
-                                        ? [
-                                              form.watch(
-                                                  "handing_over_report",
-                                              ) as File,
-                                          ]
-                                        : []
-                                }
-                                onFilesChange={(files) =>
-                                    form.setValue(
-                                        "handing_over_report",
-                                        files[0],
-                                    )
-                                }
-                            />
-
-                            <FileUploadField
-                                name="pms_reports"
-                                label="PMS Reports"
-                                description="Select PDF files"
-                                multiple={true}
-                                control={form.control}
-                                value={uploadedPmsReports}
-                                onFilesChange={(files) => {
-                                    setUploadedPmsReports(files);
-                                    form.setValue("pms_reports", files);
-                                }}
+                                name="segment"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-gray-700">
+                                            Segment
+                                        </FormLabel>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a segment" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {segment.map((item) => (
+                                                    <SelectItem
+                                                        key={item}
+                                                        value={item}>
+                                                        {item}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
                             />
                         </div>
 
-                        <div className="flex justify-end">
+                        <div className="mt-6 space-y-4 rounded-lg border border-gray-200 bg-gray-50/50 p-4">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <FileUploadField
+                                    name="purchase_order"
+                                    label="Purchase Order"
+                                    description="Upload only one PDF file"
+                                    control={form.control}
+                                    value={
+                                        form.watch("purchase_order")
+                                            ? [
+                                                  form.watch(
+                                                      "purchase_order",
+                                                  ) as File,
+                                              ]
+                                            : []
+                                    }
+                                    onFilesChange={(files) =>
+                                        form.setValue(
+                                            "purchase_order",
+                                            files[0],
+                                        )
+                                    }
+                                />
+
+                                <FileUploadField
+                                    name="invoice"
+                                    label="Invoice"
+                                    description="Select PDF files"
+                                    multiple={true}
+                                    control={form.control}
+                                    value={uploadedInvoices}
+                                    onFilesChange={(files) => {
+                                        setUploadedInvoices(files);
+                                        form.setValue("invoice", files);
+                                    }}
+                                />
+
+                                <FileUploadField
+                                    name="handing_over_report"
+                                    label="Handing Over Report"
+                                    description="Upload only one PDF file"
+                                    control={form.control}
+                                    value={
+                                        form.watch("handing_over_report")
+                                            ? [
+                                                  form.watch(
+                                                      "handing_over_report",
+                                                  ) as File,
+                                              ]
+                                            : []
+                                    }
+                                    onFilesChange={(files) =>
+                                        form.setValue(
+                                            "handing_over_report",
+                                            files[0],
+                                        )
+                                    }
+                                />
+
+                                <FileUploadField
+                                    name="pms_reports"
+                                    label="PMS Reports"
+                                    description="Select PDF files"
+                                    multiple={true}
+                                    control={form.control}
+                                    value={uploadedPmsReports}
+                                    onFilesChange={(files) => {
+                                        setUploadedPmsReports(files);
+                                        form.setValue("pms_reports", files);
+                                    }}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end pt-4">
                             <Button
                                 type="submit"
                                 className="bg-primary hover:bg-primary/90 px-6 text-white">

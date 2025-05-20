@@ -38,6 +38,7 @@ interface Client {
     phone: string;
     state: string;
     city: string;
+    segment: string;
     files: File[];
 }
 
@@ -145,9 +146,14 @@ export default function ClientPage() {
             </div>
             <div className="mb-6 rounded-lg bg-white p-6 shadow-md">
                 <div className="mb-4 flex items-center justify-between">
-                    <h1 className="text-3xl font-bold text-gray-800">
-                        {client.company_name}
-                    </h1>
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-800">
+                            {client.company_name}
+                        </h1>
+                        <p className="mt-1 text-sm text-gray-600">
+                            {client.segment}
+                        </p>
+                    </div>
                     <div className="flex gap-2">
                         <Link to={`/clients/${clientId}/edit`}>
                             <Button
@@ -179,12 +185,8 @@ export default function ClientPage() {
                             {client.phone}
                         </p>
                         <p className="text-gray-600">
-                            <span className="font-semibold">State:</span>{" "}
-                            {client.state}
-                        </p>
-                        <p className="text-gray-600">
-                            <span className="font-semibold">City:</span>{" "}
-                            {client.city}
+                            <span className="font-semibold">Location:</span>{" "}
+                            {client.city}, {client.state}
                         </p>
                     </div>
                 </div>

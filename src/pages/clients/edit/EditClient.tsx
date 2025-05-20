@@ -16,6 +16,7 @@ import BackButton from "@/components/custom/BackButton";
 import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router";
 import { IndiaStates } from "../create/stateData";
+import { segment } from "../create/segment";
 import {
     Select,
     SelectContent,
@@ -45,6 +46,9 @@ const formSchema = z.object({
     city: z.string().min(1, {
         message: "Please select a city.",
     }),
+    segment: z.string().min(1, {
+        message: "Please select a segment.",
+    }),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -57,6 +61,7 @@ interface Client {
     phone: string;
     state: string;
     city: string;
+    segment: string;
 }
 
 async function getClient(clientId: number): Promise<Client> {
@@ -97,6 +102,7 @@ export default function EditClient() {
             phone: "",
             state: "",
             city: "",
+            segment: "",
         },
     });
 
@@ -109,6 +115,7 @@ export default function EditClient() {
                 phone: client.phone,
                 state: client.state,
                 city: client.city,
+                segment: client.segment,
             });
             setSelectedState(client.state);
         }
@@ -134,6 +141,7 @@ export default function EditClient() {
                 phone: data.phone,
                 state: data.state,
                 city: data.city,
+                segment: data.segment,
             }),
         })
             .then(async (response) => {
@@ -328,6 +336,37 @@ export default function EditClient() {
                                                     </SelectItem>
                                                 ),
                                             )}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="segment"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-gray-700">
+                                        Segment
+                                    </FormLabel>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a segment" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {segment.map((item) => (
+                                                <SelectItem
+                                                    key={item}
+                                                    value={item}>
+                                                    {item}
+                                                </SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
