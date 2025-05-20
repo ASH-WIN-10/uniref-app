@@ -51,7 +51,7 @@ const formSchema = z.object({
     purchase_order: z.instanceof(File).optional(),
     invoice: z.array(z.instanceof(File)).optional(),
     handing_over_report: z.instanceof(File).optional(),
-    pms_reports: z.array(z.instanceof(File)).optional(),
+    pms_report: z.array(z.instanceof(File)).optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -103,8 +103,8 @@ export function CreateClients() {
             formData.append("handing_over_report", data.handing_over_report);
         }
 
-        if (data.pms_reports) {
-            data.pms_reports.forEach((file) => {
+        if (data.pms_report) {
+            data.pms_report.forEach((file) => {
                 formData.append("pms_report", file);
             });
         }
@@ -396,15 +396,15 @@ export function CreateClients() {
                                 />
 
                                 <FileUploadField
-                                    name="pms_reports"
-                                    label="PMS Reports"
+                                    name="pms_report"
+                                    label="PMS Report"
                                     description="Select PDF files"
                                     multiple={true}
                                     control={form.control}
                                     value={uploadedPmsReports}
                                     onFilesChange={(files) => {
                                         setUploadedPmsReports(files);
-                                        form.setValue("pms_reports", files);
+                                        form.setValue("pms_report", files);
                                     }}
                                 />
                             </div>

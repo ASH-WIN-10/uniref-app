@@ -131,7 +131,7 @@ export default function ClientPage() {
         "invoice",
         "purchase_order",
         "handing_over_report",
-        "pms_reports",
+        "pms_report",
     ];
 
     const filteredFiles =
