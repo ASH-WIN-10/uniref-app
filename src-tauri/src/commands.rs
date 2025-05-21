@@ -1,10 +1,12 @@
 use crate::api_types::ClientsResponse;
 
 #[tauri::command]
-pub async fn fetch_clients() -> Result<ClientsResponse, String> {
+pub async fn fetch_clients(query_params: Option<String>) -> Result<ClientsResponse, String> {
     let api_url = std::env::var("API_URL").expect("API_URL environment variable not set");
+    let query_params = query_params.unwrap_or_default();
+    let endpoint = format!("{}/clients?{}", api_url, query_params);
 
-    let response = reqwest::get(format!("{}/clients", api_url))
+    let response = reqwest::get(&endpoint)
         .await
         .map_err(|e| format!("Failed to fetch clients: {}", e))?;
 
