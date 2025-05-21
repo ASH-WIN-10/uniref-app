@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { formSchema, type FormData } from "./CreateFormSchema";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,36 +25,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-
-const formSchema = z.object({
-    company_name: z.string().min(2, {
-        message: "Company name must be at least 2 characters.",
-    }),
-    client_name: z.string().min(2, {
-        message: "Client name must be at least 2 characters.",
-    }),
-    email: z.string().email({
-        message: "Please enter a valid email address.",
-    }),
-    phone: z.string().length(10, {
-        message: "Phone number must be only 10 digits.",
-    }),
-    state: z.string().min(1, {
-        message: "Please select a state.",
-    }),
-    city: z.string().min(1, {
-        message: "Please select a district.",
-    }),
-    segment: z.string().min(1, {
-        message: "Please select a segment.",
-    }),
-    purchase_order: z.instanceof(File).optional(),
-    invoice: z.array(z.instanceof(File)).optional(),
-    handing_over_report: z.instanceof(File).optional(),
-    pms_report: z.array(z.instanceof(File)).optional(),
-});
-
-type FormData = z.infer<typeof formSchema>;
 
 export function CreateClients() {
     const navigate = useNavigate();
