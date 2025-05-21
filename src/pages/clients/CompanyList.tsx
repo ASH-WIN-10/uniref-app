@@ -4,6 +4,7 @@ import { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import CompanyListSearchBar from "./CompanyListSearch";
 import LoadingScreen from "@/components/custom/LoadingScreen";
+import { invoke } from "@tauri-apps/api/core";
 
 interface Client {
     id: string;
@@ -21,9 +22,16 @@ export default function CompanyList() {
     } = useQuery<Client[]>({
         queryKey: ["clients"],
         queryFn: async () => {
-            const response = await fetch("http://192.168.0.31:8080/v1/clients");
-            const data = await response.json();
-            return data.clients;
+            try {
+                const response = (await invoke("fetch_clients")) as {
+                    clients: Client[];
+                };
+                const clients = response.clients;
+                return clients;
+            } catch (error) {
+                console.error(error);
+                throw error;
+            }
         },
     });
 
