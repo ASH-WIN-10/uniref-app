@@ -1,6 +1,6 @@
 use dotenv::dotenv;
 mod api_types;
-mod commands;
+mod client_commands;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -9,11 +9,11 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            commands::fetch_clients,
-            commands::create_client,
-            commands::fetch_client,
-            commands::update_client,
-            commands::delete_client,
+            client_commands::fetch_clients,
+            client_commands::create_client,
+            client_commands::fetch_client,
+            client_commands::update_client,
+            client_commands::delete_client,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
