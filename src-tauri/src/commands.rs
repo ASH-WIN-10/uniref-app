@@ -1,10 +1,10 @@
-use crate::api_types::{ClientsResponse, CreateFormData, CreateResponse};
+use crate::api_types::{CreateFormData, CreateResponse, FetchClientsResponse, GetClientResponse};
 use reqwest::multipart::{Form, Part};
 use std::path::PathBuf;
 use tokio::{fs::File, io::AsyncReadExt};
 
 #[tauri::command]
-pub async fn fetch_clients(query_params: Option<String>) -> Result<ClientsResponse, String> {
+pub async fn fetch_clients(query_params: Option<String>) -> Result<FetchClientsResponse, String> {
     let api_url = std::env::var("API_URL").expect("API_URL environment variable not set");
     let query_params = query_params.unwrap_or_default();
     let endpoint = format!("{}/clients?{}", api_url, query_params);
@@ -27,6 +27,34 @@ pub async fn fetch_clients(query_params: Option<String>) -> Result<ClientsRespon
             .unwrap_or_else(|_| "Unknown error".to_string());
         Err(format!(
             "Error fetching clients: {} with status code {}",
+            error_message, status_code
+        ))
+    }
+}
+
+#[tauri::command]
+pub async fn fetch_client(client_id: u32) -> Result<GetClientResponse, String> {
+    let api_url = std::env::var("API_URL").expect("API_URL environment variable not set");
+    let endpoint = format!("{}/clients/{}", api_url, client_id);
+
+    let response = reqwest::get(&endpoint)
+        .await
+        .map_err(|e| format!("Failed to fetch client: {}", e))?;
+
+    if response.status().is_success() {
+        let client = response
+            .json()
+            .await
+            .map_err(|e| format!("Failed to parse JSON: {}", e))?;
+        Ok(client)
+    } else {
+        let status_code = response.status();
+        let error_message = response
+            .text()
+            .await
+            .unwrap_or_else(|_| "Unknown error".to_string());
+        Err(format!(
+            "Error fetching client: {} with status code {}",
             error_message, status_code
         ))
     }

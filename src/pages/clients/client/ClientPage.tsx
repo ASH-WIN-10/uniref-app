@@ -8,6 +8,7 @@ import FileCard from "./FileCard";
 import AddFile from "./AddFileDialog";
 import LoadingScreen from "@/components/custom/LoadingScreen";
 import DeleteClientButton from "./DeleteClientButton";
+import { invoke } from "@tauri-apps/api/core";
 
 export interface File {
     id: number;
@@ -31,16 +32,6 @@ interface Client {
     files: File[];
 }
 
-async function getClient(clientId: number): Promise<Client> {
-    const res = await fetch(`http://192.168.0.31:8080/v1/clients/${clientId}`);
-    if (!res.ok) {
-        if (res.status === 404) throw new Error("Client not found");
-        else throw new Error("Network response was not ok");
-    }
-    const data = await res.json();
-    return data.client;
-}
-
 export default function ClientPage() {
     const params = useParams();
     const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -55,7 +46,20 @@ export default function ClientPage() {
         error,
     } = useQuery<Client>({
         queryKey: ["client", clientId],
-        queryFn: () => getClient(clientId),
+        queryFn: async () => {
+            try {
+                const response = (await invoke("fetch_client", {
+                    clientId: clientId,
+                })) as {
+                    client: Client;
+                };
+                const client = response.client;
+                return client;
+            } catch (error) {
+                console.error(error);
+                throw error;
+            }
+        },
     });
 
     if (isLoading) return <LoadingScreen />;

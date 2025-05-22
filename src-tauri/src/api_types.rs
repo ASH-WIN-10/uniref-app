@@ -34,7 +34,7 @@ struct Metadata {
 }
 
 #[derive(Deserialize, Serialize, Debug)]
-pub struct ClientsResponse {
+pub struct FetchClientsResponse {
     clients: Vec<Client>,
     metadata: Metadata,
 }
@@ -57,4 +57,10 @@ pub struct CreateFormData {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct CreateResponse {
     client: Client,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct GetClientResponse {
+    client: Client,
+    files: Option<Vec<File>>,
 }

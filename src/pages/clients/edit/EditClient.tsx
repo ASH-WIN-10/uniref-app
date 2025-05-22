@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import LoadingScreen from "@/components/custom/LoadingScreen";
+import { invoke } from "@tauri-apps/api/core";
 
 const formSchema = z.object({
     company_name: z.string().min(2, {
@@ -64,17 +65,6 @@ interface Client {
     segment: string;
 }
 
-async function getClient(clientId: number): Promise<Client> {
-    const res = await fetch(`http://192.168.0.31:8080/v1/clients/${clientId}`);
-    if (!res.ok) {
-        if (res.status === 404) throw new Error("Client not found");
-        else throw new Error("Network response was not ok");
-    }
-    const data = await res.json();
-    console.log(data);
-    return data.client;
-}
-
 export default function EditClient() {
     const navigate = useNavigate();
     const params = useParams();
@@ -90,7 +80,20 @@ export default function EditClient() {
         error,
     } = useQuery<Client>({
         queryKey: ["client", clientId],
-        queryFn: () => getClient(clientId),
+        queryFn: async () => {
+            try {
+                const response = (await invoke("fetch_client", {
+                    clientId: clientId,
+                })) as {
+                    client: Client;
+                };
+                const client = response.client;
+                return client;
+            } catch (error) {
+                console.error(error);
+                throw error;
+            }
+        },
     });
 
     const form = useForm<FormData>({
