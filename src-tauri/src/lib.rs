@@ -6,8 +6,12 @@ mod commands;
 pub fn run() {
     dotenv().ok();
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![commands::fetch_clients])
+        .invoke_handler(tauri::generate_handler![
+            commands::fetch_clients,
+            commands::create_client,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

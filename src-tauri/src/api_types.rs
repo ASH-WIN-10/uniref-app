@@ -2,13 +2,13 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct File {
-    id: String,
+    id: u32,
     created_at: String,
     original_file_name: String,
     file_name: String,
     file_path: String,
     category: String,
-    client_id: String,
+    client_id: u32,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -37,4 +37,24 @@ struct Metadata {
 pub struct ClientsResponse {
     clients: Vec<Client>,
     metadata: Metadata,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct CreateFormData {
+    pub company_name: String,
+    pub client_name: String,
+    pub email: String,
+    pub phone: String,
+    pub segment: String,
+    pub state: String,
+    pub city: String,
+    pub purchase_order: Option<String>,
+    pub invoice: Option<Vec<String>>,
+    pub handing_over_report: Option<String>,
+    pub pms_report: Option<Vec<String>>,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct CreateResponse {
+    client: Client,
 }
