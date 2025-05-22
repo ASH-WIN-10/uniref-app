@@ -16,6 +16,7 @@ import {
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { invoke } from "@tauri-apps/api/core";
 
 function DeleteFileButton({
     file,
@@ -27,31 +28,22 @@ function DeleteFileButton({
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
-    function handleDeleteFile() {
-        fetch(
-            `http://192.168.0.31:8080/v1/clients/${file.client_id}/files/${file.id}`,
-            {
-                method: "DELETE",
-            },
-        )
-            .then((response) => {
-                if (!response.ok) {
-                    if (response.status === 404)
-                        throw new Error("File not found");
-                    else throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .catch((error) => {
-                console.error("Error deleting file:", error);
-            })
-            .finally(() => {
-                toast.success("File deleted successfully");
-                queryClient.invalidateQueries({
-                    queryKey: ["client", file.client_id],
-                });
-                navigate(`/clients/${file.client_id}`);
+    async function handleDeleteFile() {
+        try {
+            await invoke("delete_file", {
+                fileId: file.id,
+                clientId: file.client_id,
             });
+        } catch (error) {
+            console.error("Error deleting file:", error);
+            toast.error("Error deleting file");
+        } finally {
+            toast.success("File deleted successfully");
+            queryClient.invalidateQueries({
+                queryKey: ["client", file.client_id],
+            });
+            navigate(`/clients/${file.client_id}`);
+        }
     }
 
     return (
