@@ -13,6 +13,7 @@ pub fn run() {
             commands::create_client,
             commands::fetch_client,
             commands::update_client,
+            commands::delete_client,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -151,7 +151,7 @@ pub async fn create_client(form_data: CreateFormData) -> Result<ClientResponse, 
 }
 
 #[tauri::command]
-pub async fn update_client(client_data: UpdateClientRequest) -> Result<ClientResponse, String> {
+pub async fn update_client(client_data: UpdateClientRequest) -> Result<(), String> {
     let api_url = std::env::var("API_URL").expect("API_URL environment variable not set");
     let endpoint = format!("{}/clients/{}", api_url, client_data.id);
 
@@ -164,11 +164,7 @@ pub async fn update_client(client_data: UpdateClientRequest) -> Result<ClientRes
         .map_err(|e| format!("Failed to fetch client: {}", e))?;
 
     if response.status().is_success() {
-        let client = response
-            .json()
-            .await
-            .map_err(|e| format!("Failed to parse JSON: {}", e))?;
-        Ok(client)
+        Ok(())
     } else {
         let status_code = response.status();
         let error_message = response
@@ -177,6 +173,33 @@ pub async fn update_client(client_data: UpdateClientRequest) -> Result<ClientRes
             .unwrap_or_else(|_| "Unknown error".to_string());
         Err(format!(
             "Error fetching client: {} with status code {}",
+            error_message, status_code
+        ))
+    }
+}
+
+#[tauri::command]
+pub async fn delete_client(client_id: u32) -> Result<(), String> {
+    let api_url = std::env::var("API_URL").expect("API_URL environment variable not set");
+    let endpoint = format!("{}/clients/{}", api_url, client_id);
+
+    let client = reqwest::Client::new();
+    let response = client
+        .delete(endpoint)
+        .send()
+        .await
+        .map_err(|e| format!("Failed to delete client: {}", e))?;
+
+    if response.status().is_success() {
+        Ok(())
+    } else {
+        let status_code = response.status();
+        let error_message = response
+            .text()
+            .await
+            .unwrap_or_else(|_| "Unknown error".to_string());
+        Err(format!(
+            "Error deleting client: {} with status code {}",
             error_message, status_code
         ))
     }
