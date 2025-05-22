@@ -1,4 +1,4 @@
-use crate::api_types::{CreateFormData, CreateResponse, FetchClientsResponse, GetClientResponse};
+use crate::api_types::{ClientResponse, CreateFormData, FetchClientsResponse, UpdateClientRequest};
 use reqwest::multipart::{Form, Part};
 use std::path::PathBuf;
 use tokio::{fs::File, io::AsyncReadExt};
@@ -33,7 +33,7 @@ pub async fn fetch_clients(query_params: Option<String>) -> Result<FetchClientsR
 }
 
 #[tauri::command]
-pub async fn fetch_client(client_id: u32) -> Result<GetClientResponse, String> {
+pub async fn fetch_client(client_id: u32) -> Result<ClientResponse, String> {
     let api_url = std::env::var("API_URL").expect("API_URL environment variable not set");
     let endpoint = format!("{}/clients/{}", api_url, client_id);
 
@@ -61,7 +61,7 @@ pub async fn fetch_client(client_id: u32) -> Result<GetClientResponse, String> {
 }
 
 #[tauri::command]
-pub async fn create_client(form_data: CreateFormData) -> Result<CreateResponse, String> {
+pub async fn create_client(form_data: CreateFormData) -> Result<ClientResponse, String> {
     async fn get_file_part(file: &mut File, path: PathBuf) -> Result<Part, String> {
         let mut buffer = Vec::new();
         file.read_to_end(&mut buffer)
@@ -138,7 +138,7 @@ pub async fn create_client(form_data: CreateFormData) -> Result<CreateResponse, 
         Ok(response) => {
             if response.status().is_success() {
                 let create_response = response
-                    .json::<CreateResponse>()
+                    .json::<ClientResponse>()
                     .await
                     .map_err(|e| format!("Failed to parse JSON: {}", e))?;
                 Ok(create_response)
@@ -147,5 +147,37 @@ pub async fn create_client(form_data: CreateFormData) -> Result<CreateResponse, 
             }
         }
         Err(e) => Err(format!("Failed to send request: {}", e)),
+    }
+}
+
+#[tauri::command]
+pub async fn update_client(client_data: UpdateClientRequest) -> Result<ClientResponse, String> {
+    let api_url = std::env::var("API_URL").expect("API_URL environment variable not set");
+    let endpoint = format!("{}/clients/{}", api_url, client_data.id);
+
+    let client = reqwest::Client::new();
+    let response = client
+        .put(endpoint)
+        .json(&client_data)
+        .send()
+        .await
+        .map_err(|e| format!("Failed to fetch client: {}", e))?;
+
+    if response.status().is_success() {
+        let client = response
+            .json()
+            .await
+            .map_err(|e| format!("Failed to parse JSON: {}", e))?;
+        Ok(client)
+    } else {
+        let status_code = response.status();
+        let error_message = response
+            .text()
+            .await
+            .unwrap_or_else(|_| "Unknown error".to_string());
+        Err(format!(
+            "Error fetching client: {} with status code {}",
+            error_message, status_code
+        ))
     }
 }

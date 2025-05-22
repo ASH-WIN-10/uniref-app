@@ -55,12 +55,18 @@ pub struct CreateFormData {
 }
 
 #[derive(Deserialize, Serialize, Debug)]
-pub struct CreateResponse {
+pub struct ClientResponse {
     client: Client,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
-pub struct GetClientResponse {
-    client: Client,
-    files: Option<Vec<File>>,
+pub struct UpdateClientRequest {
+    pub id: u32,
+    company_name: String,
+    client_name: String,
+    email: String,
+    phone: String,
+    state: String,
+    city: String,
+    segment: String,
 }

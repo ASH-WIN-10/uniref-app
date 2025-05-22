@@ -128,48 +128,26 @@ export default function EditClient() {
         (s) => s.state === selectedState,
     );
 
-    function handleFormSubmit(data: FormData) {
-        toast.loading("Updating client...");
+    async function handleFormSubmit(data: FormData) {
+        try {
+            toast.loading("Updating client...");
 
-        fetch(`http://192.168.0.31:8080/v1/clients/${clientId}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
-            body: JSON.stringify({
-                company_name: data.company_name,
-                client_name: data.client_name,
-                email: data.email,
-                phone: data.phone,
-                state: data.state,
-                city: data.city,
-                segment: data.segment,
-            }),
-        })
-            .then(async (response) => {
-                console.log(response);
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => null);
-                    throw new Error(
-                        errorData?.message || "Failed to update client",
-                    );
-                }
-                return response.json();
-            })
-            .then(() => {
-                toast.dismiss();
-                toast.success("Client updated successfully");
-                navigate(`/clients/${clientId}`);
-            })
-            .catch((error) => {
-                toast.dismiss();
-                console.error("Error updating client:", error);
-                toast.error(
-                    error?.message ||
-                        "Failed to update client. Please try again.",
-                );
+            await invoke("update_client", {
+                clientData: {
+                    id: clientId,
+                    ...data,
+                },
             });
+
+            toast.dismiss();
+            toast.success("Client updated successfully");
+
+            navigate(`/clients/${clientId}`);
+        } catch (error) {
+            toast.dismiss();
+            console.error("Error updating client:", error);
+            toast.error("Failed to update client. Please try again.");
+        }
     }
 
     if (isLoading) return <LoadingScreen />;
