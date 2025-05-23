@@ -25,12 +25,12 @@ pub struct Client {
 }
 
 #[derive(Deserialize, Serialize, Debug)]
-struct Metadata {
-    current_page: u32,
-    page_size: u32,
-    first_page: u32,
-    last_page: u32,
-    total_records: u32,
+pub struct Metadata {
+    current_page: Option<u32>,
+    page_size: Option<u32>,
+    first_page: Option<u32>,
+    last_page: Option<u32>,
+    total_records: Option<u32>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]

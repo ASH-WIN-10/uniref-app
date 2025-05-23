@@ -18,7 +18,7 @@ pub async fn fetch_clients(query_params: Option<String>) -> Result<FetchClientsR
 
     if response.status().is_success() {
         let clients = response
-            .json()
+            .json::<FetchClientsResponse>()
             .await
             .map_err(|e| format!("Failed to parse JSON: {}", e))?;
         Ok(clients)
