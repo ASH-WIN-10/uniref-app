@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Plus } from "lucide-react";
 import { z } from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/form";
 import { useQueryClient } from "@tanstack/react-query";
 import { invoke } from "@tauri-apps/api/core";
-import { handleSingleFileSelection } from "@/lib";
+import { handleSingleFileSelection, isWindows } from "@/lib";
 
 const fileFormSchema = z.object({
     category: z.enum(
@@ -49,6 +49,11 @@ function AddFileDialog({ clientId }: { clientId: number }) {
     const [openState, setOpen] = useState(false);
     const [filepath, setFilepath] = useState<string | null>(null);
     const [filename, setFilename] = useState<string | null>(null);
+    const [isWindowsOS, setIsWindowsOS] = useState(false);
+
+    useEffect(() => {
+        isWindows().then(setIsWindowsOS);
+    }, []);
 
     const form = useForm<FileFormData>({
         resolver: zodResolver(fileFormSchema),
@@ -59,8 +64,15 @@ function AddFileDialog({ clientId }: { clientId: number }) {
 
     async function handleFileSelection() {
         handleSingleFileSelection((selected: string) => {
+            if (isWindowsOS) {
+                const path = selected.split("\\").join("/");
+                setFilepath(path);
+            } else {
+                setFilepath(selected);
+            }
+
+            setFilename(filepath || null);
             setFilepath(selected);
-            setFilename(selected.split("/").pop() || null);
             form.setValue("filepath", filepath || "");
         });
     }
