@@ -7,7 +7,6 @@ import {
     DialogDescription,
 } from "@/components/ui/dialog";
 import { DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import {
     Select,
     SelectContent,
@@ -30,6 +29,8 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { useQueryClient } from "@tanstack/react-query";
+import { open } from "@tauri-apps/plugin-dialog";
+import { invoke } from "@tauri-apps/api/core";
 
 const fileFormSchema = z.object({
     category: z.enum(
@@ -38,20 +39,16 @@ const fileFormSchema = z.object({
             required_error: "Please select a category",
         },
     ),
-    file: z
-        .instanceof(File, {
-            message: "Please select a file",
-        })
-        .refine((file) => file.size <= 10 * 1024 * 1024, {
-            message: "File size must be less than 10MB",
-        }),
+    filepath: z.string(),
 });
 
 type FileFormData = z.infer<typeof fileFormSchema>;
 
 function AddFileDialog({ clientId }: { clientId: number }) {
     const queryClient = useQueryClient();
-    const [open, setOpen] = useState(false);
+    const [openState, setOpen] = useState(false);
+    const [filepath, setFilepath] = useState<string | null>(null);
+    const [filename, setFilename] = useState<string | null>(null);
 
     const form = useForm<FileFormData>({
         resolver: zodResolver(fileFormSchema),
@@ -60,23 +57,36 @@ function AddFileDialog({ clientId }: { clientId: number }) {
         },
     });
 
-    async function onSubmit(data: FileFormData) {
-        const formData = new FormData();
-        formData.append("category", data.category);
-        formData.append("file", data.file);
-
+    async function handleFileSelection() {
         try {
-            const response = await fetch(
-                `http://192.168.0.31:8080/v1/clients/${clientId}/files`,
-                {
-                    method: "POST",
-                    body: formData,
-                },
-            );
+            const selected = await open({
+                directory: false,
+                multiple: false,
+                filters: [
+                    {
+                        name: "PDF Files",
+                        extensions: ["pdf"],
+                    },
+                ],
+            });
 
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
+            if (selected) {
+                setFilepath(selected);
+                setFilename(selected.split("/").pop() || null);
+                form.setValue("filepath", filepath || "");
             }
+        } catch (error) {
+            console.error("Error selecting file:", error);
+        }
+    }
+
+    async function onSubmit(data: FileFormData) {
+        try {
+            await invoke("add_file", {
+                clientId: clientId,
+                category: data.category,
+                filepath: filepath,
+            });
 
             toast.success("File added successfully");
             setOpen(false);
@@ -89,7 +99,7 @@ function AddFileDialog({ clientId }: { clientId: number }) {
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={openState} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button variant="outline">
                     <Plus />
@@ -142,21 +152,19 @@ function AddFileDialog({ clientId }: { clientId: number }) {
                         />
                         <FormField
                             control={form.control}
-                            name="file"
-                            render={({
-                                field: { onChange, value, ...field },
-                            }) => (
+                            name="filepath"
+                            render={() => (
                                 <FormItem>
                                     <FormLabel>File</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            type="file"
-                                            accept=".pdf"
-                                            onChange={(e) =>
-                                                onChange(e.target.files?.[0])
-                                            }
-                                            {...field}
-                                        />
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={() =>
+                                                handleFileSelection()
+                                            }>
+                                            {filename || "Select a file"}
+                                        </Button>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
