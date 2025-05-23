@@ -101,9 +101,11 @@ function FileCard({ file }: { file: File }) {
             onMouseLeave={() => setDeleteHidden(true)}>
             <div className="flex items-start justify-between">
                 <div className="flex-1">
-                    <h3 className="mb-1 truncate font-medium text-gray-800">
-                        {file.original_file_name}
-                    </h3>
+                    <div className="line-clamp-1">
+                        <h3 className="mb-1 font-medium text-gray-800">
+                            {file.original_file_name}
+                        </h3>
+                    </div>
                     <p className="mb-2 text-sm text-gray-500">
                         {formatDate(file.created_at)}
                     </p>
