@@ -2,6 +2,6 @@
 indent_style = space
 indent_size = 4
 
-[*jsx]
+[*ts]
 indent_style = space
 indent_size = 4
