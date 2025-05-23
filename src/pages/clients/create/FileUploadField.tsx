@@ -11,6 +11,8 @@ import {
 import { open } from "@tauri-apps/plugin-dialog";
 import { toast } from "sonner";
 import { UploadedFiles } from "./CreateClients";
+import { isWindows } from "@/lib";
+import { useEffect, useState } from "react";
 
 export const FileUploadField = ({
     name,
@@ -29,6 +31,12 @@ export const FileUploadField = ({
     value: string[];
     setUploadedFiles: React.Dispatch<React.SetStateAction<UploadedFiles>>;
 }) => {
+    const [isWindowsOS, setIsWindowsOS] = useState(false);
+
+    useEffect(() => {
+        isWindows().then(setIsWindowsOS);
+    }, []);
+
     async function handleFileSelection(field: string, multiple: false) {
         try {
             const selected = await open({
@@ -135,9 +143,16 @@ export const FileUploadField = ({
 
                                     <div className="space-y-1">
                                         {value.map((filepath, index) => {
-                                            const filename = filepath
-                                                .split("/")
-                                                .pop();
+                                            let filename: string | undefined;
+                                            if (isWindowsOS)
+                                                filename = filepath
+                                                    .split("\\")
+                                                    .pop();
+                                            else
+                                                filename = filepath
+                                                    .split("/")
+                                                    .pop();
+
                                             return (
                                                 <div
                                                     key={`${filename}-${index}`}
