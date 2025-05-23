@@ -29,8 +29,8 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { useQueryClient } from "@tanstack/react-query";
-import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
+import { handleSingleFileSelection } from "@/lib";
 
 const fileFormSchema = z.object({
     category: z.enum(
@@ -58,26 +58,11 @@ function AddFileDialog({ clientId }: { clientId: number }) {
     });
 
     async function handleFileSelection() {
-        try {
-            const selected = await open({
-                directory: false,
-                multiple: false,
-                filters: [
-                    {
-                        name: "PDF Files",
-                        extensions: ["pdf"],
-                    },
-                ],
-            });
-
-            if (selected) {
-                setFilepath(selected);
-                setFilename(selected.split("/").pop() || null);
-                form.setValue("filepath", filepath || "");
-            }
-        } catch (error) {
-            console.error("Error selecting file:", error);
-        }
+        handleSingleFileSelection((selected: string) => {
+            setFilepath(selected);
+            setFilename(selected.split("/").pop() || null);
+            form.setValue("filepath", filepath || "");
+        });
     }
 
     async function onSubmit(data: FileFormData) {

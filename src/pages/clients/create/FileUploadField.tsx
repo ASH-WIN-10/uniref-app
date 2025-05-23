@@ -8,10 +8,12 @@ import {
     FormMessage,
     FormDescription,
 } from "@/components/ui/form";
-import { open } from "@tauri-apps/plugin-dialog";
-import { toast } from "sonner";
 import { UploadedFiles } from "./CreateClients";
-import { isWindows } from "@/lib";
+import {
+    handleSingleFileSelection,
+    handleMultipleFileSelection,
+    isWindows,
+} from "@/lib";
 import { useEffect, useState } from "react";
 
 export const FileUploadField = ({
@@ -37,58 +39,24 @@ export const FileUploadField = ({
         isWindows().then(setIsWindowsOS);
     }, []);
 
-    async function handleFileSelection(field: string, multiple: false) {
-        try {
-            const selected = await open({
-                directory: false,
-                multiple: multiple,
-                filters: [
-                    {
-                        name: "PDF Files",
-                        extensions: ["pdf"],
-                    },
-                ],
-            });
-
-            if (selected) {
+    function handleFileSelection() {
+        if (!multiple)
+            handleSingleFileSelection((selected: string) =>
                 setUploadedFiles((prev) => ({
                     ...prev,
-                    [field]: selected,
-                }));
-            }
-        } catch (error) {
-            console.error("Error selecting file:", error);
-        }
-    }
-
-    async function handleMultipleFileSelection(
-        field: "invoice" | "pms_report",
-        multiple: true,
-    ) {
-        try {
-            const selected = await open({
-                directory: false,
-                multiple: multiple,
-                filters: [
-                    {
-                        name: "PDF Files",
-                        extensions: ["pdf"],
-                    },
-                ],
-            });
-
-            if (selected) {
-                setUploadedFiles((prev) => ({
-                    ...prev,
-                    [field]: [...(prev[field] || []), ...selected],
-                }));
-            }
-        } catch (error) {
-            console.error("Error selecting files:", error);
-            toast.error(
-                "An error occurred while selecting files. Please try again.",
+                    [name]: selected,
+                })),
             );
-        }
+        else
+            handleMultipleFileSelection((selected: string[]) =>
+                setUploadedFiles((prev) => ({
+                    ...prev,
+                    [name]: [
+                        ...(prev[name as "invoice" | "pms_report"] || []),
+                        ...selected,
+                    ],
+                })),
+            );
     }
 
     return (
@@ -103,20 +71,7 @@ export const FileUploadField = ({
                             <Button
                                 type="button"
                                 variant="outline"
-                                onClick={() => {
-                                    if (!multiple)
-                                        handleFileSelection(name, false);
-                                    else if (name === "invoice")
-                                        handleMultipleFileSelection(
-                                            "invoice",
-                                            true,
-                                        );
-                                    else if (name === "pms_report")
-                                        handleMultipleFileSelection(
-                                            "pms_report",
-                                            true,
-                                        );
-                                }}
+                                onClick={handleFileSelection}
                                 className="w-full">
                                 Choose File
                             </Button>
