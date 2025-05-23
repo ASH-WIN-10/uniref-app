@@ -22,10 +22,10 @@ export const formSchema = z.object({
     segment: z.string().min(1, {
         message: "Please select a segment.",
     }),
-    purchase_order: z.instanceof(File).optional(),
-    invoice: z.array(z.instanceof(File)).optional(),
-    handing_over_report: z.instanceof(File).optional(),
-    pms_report: z.array(z.instanceof(File)).optional(),
+    purchase_order: z.string().optional(),
+    invoice: z.array(z.string()).optional(),
+    handing_over_report: z.string().optional(),
+    pms_report: z.array(z.string()).optional(),
 });
 
 export type FormData = z.infer<typeof formSchema>;

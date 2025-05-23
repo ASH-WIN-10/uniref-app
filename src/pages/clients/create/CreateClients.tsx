@@ -14,8 +14,6 @@ import {
 import { Input } from "@/components/ui/input";
 import BackButton from "@/components/custom/BackButton";
 import { FileUploadField } from "./FileUploadField";
-import { toast } from "sonner";
-import { useNavigate } from "react-router";
 import { IndiaStates } from "./stateData";
 import { segment } from "./segment";
 import {
@@ -25,11 +23,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { invoke } from "@tauri-apps/api/core";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
+
+export interface UploadedFiles {
+    purchase_order?: string;
+    invoice?: string[];
+    handing_over_report?: string;
+    pms_report?: string[];
+}
 
 export function CreateClients() {
     const navigate = useNavigate();
-    const [uploadedInvoices, setUploadedInvoices] = useState<File[]>([]);
-    const [uploadedPmsReports, setUploadedPmsReports] = useState<File[]>([]);
+    const [uploadedFiles, setUploadedFiles] = useState<UploadedFiles>({});
     const [selectedState, setSelectedState] = useState<string>("");
 
     const form = useForm<FormData>({
@@ -49,57 +56,36 @@ export function CreateClients() {
         (s) => s.state === selectedState,
     );
 
-    function handleFormSubmit(data: FormData) {
-        const formData = new FormData();
-        formData.append("company_name", data.company_name);
-        formData.append("client_name", data.client_name);
-        formData.append("email", data.email);
-        formData.append("phone", data.phone);
-        formData.append("state", data.state);
-        formData.append("city", data.city);
-        formData.append("segment", data.segment);
+    async function handleFormSubmit(data: FormData) {
+        try {
+            const formData: FormData = {
+                company_name: data.company_name,
+                client_name: data.client_name,
+                email: data.email,
+                phone: data.phone,
+                state: data.state,
+                city: data.city,
+                segment: data.segment,
+                purchase_order: uploadedFiles.purchase_order,
+                invoice: uploadedFiles.invoice,
+                handing_over_report: uploadedFiles.handing_over_report,
+                pms_report: uploadedFiles.pms_report,
+            };
 
-        if (data.purchase_order) {
-            formData.append("purchase_order", data.purchase_order);
+            const response = (await invoke("create_client", {
+                formData: formData,
+            })) as {
+                client: {
+                    id: string;
+                };
+            };
+
+            const clientId = response.client.id;
+            toast.success("Client created successfully");
+            navigate(`/clients/${clientId}`);
+        } catch (error) {
+            console.error("Error:", error);
         }
-
-        if (data.invoice) {
-            data.invoice.forEach((file) => {
-                formData.append("invoice", file);
-            });
-        }
-
-        if (data.handing_over_report) {
-            formData.append("handing_over_report", data.handing_over_report);
-        }
-
-        if (data.pms_report) {
-            data.pms_report.forEach((file) => {
-                formData.append("pms_report", file);
-            });
-        }
-
-        let clientId: Number;
-        fetch("http://192.168.0.31:8080/v1/clients", {
-            method: "POST",
-            body: formData,
-        })
-            .then((response) => {
-                if (!response.ok)
-                    throw new Error("Network response was not ok");
-                return response.json();
-            })
-            .then((data) => {
-                clientId = data.client.id;
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-                alert("An error occurred while submitting the form.");
-            })
-            .finally(() => {
-                toast.success("Client created successfully");
-                navigate(`/clients/${clientId}`);
-            });
     }
 
     return (
@@ -314,20 +300,11 @@ export function CreateClients() {
                                     description="Upload only one PDF file"
                                     control={form.control}
                                     value={
-                                        form.watch("purchase_order")
-                                            ? [
-                                                  form.watch(
-                                                      "purchase_order",
-                                                  ) as File,
-                                              ]
+                                        uploadedFiles.purchase_order
+                                            ? [uploadedFiles.purchase_order]
                                             : []
                                     }
-                                    onFilesChange={(files) =>
-                                        form.setValue(
-                                            "purchase_order",
-                                            files[0],
-                                        )
-                                    }
+                                    setUploadedFiles={setUploadedFiles}
                                 />
 
                                 <FileUploadField
@@ -336,11 +313,12 @@ export function CreateClients() {
                                     description="Select PDF files"
                                     multiple={true}
                                     control={form.control}
-                                    value={uploadedInvoices}
-                                    onFilesChange={(files) => {
-                                        setUploadedInvoices(files);
-                                        form.setValue("invoice", files);
-                                    }}
+                                    value={
+                                        uploadedFiles.invoice
+                                            ? uploadedFiles.invoice
+                                            : []
+                                    }
+                                    setUploadedFiles={setUploadedFiles}
                                 />
 
                                 <FileUploadField
@@ -349,20 +327,13 @@ export function CreateClients() {
                                     description="Upload only one PDF file"
                                     control={form.control}
                                     value={
-                                        form.watch("handing_over_report")
+                                        uploadedFiles.handing_over_report
                                             ? [
-                                                  form.watch(
-                                                      "handing_over_report",
-                                                  ) as File,
+                                                  uploadedFiles.handing_over_report,
                                               ]
                                             : []
                                     }
-                                    onFilesChange={(files) =>
-                                        form.setValue(
-                                            "handing_over_report",
-                                            files[0],
-                                        )
-                                    }
+                                    setUploadedFiles={setUploadedFiles}
                                 />
 
                                 <FileUploadField
@@ -371,11 +342,12 @@ export function CreateClients() {
                                     description="Select PDF files"
                                     multiple={true}
                                     control={form.control}
-                                    value={uploadedPmsReports}
-                                    onFilesChange={(files) => {
-                                        setUploadedPmsReports(files);
-                                        form.setValue("pms_report", files);
-                                    }}
+                                    value={
+                                        uploadedFiles.pms_report
+                                            ? uploadedFiles.pms_report
+                                            : []
+                                    }
+                                    setUploadedFiles={setUploadedFiles}
                                 />
                             </div>
                         </div>

@@ -8,6 +8,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useState, useCallback, useMemo, useEffect } from "react";
+import { invoke } from "@tauri-apps/api/core";
 
 interface Client {
     id: string;
@@ -51,14 +52,21 @@ export default function CompanyListSearchBar({
                 selectedState !== "all" ||
                 selectedCity !== "all"
             ) {
-                const response = await fetch(
-                    `http://192.168.0.31:8080/v1/clients?${queryParams.toString()}`,
-                );
+                let clients: Client[] = [];
+                try {
+                    const response = (await invoke("fetch_clients", {
+                        queryParams: queryParams.toString(),
+                    })) as {
+                        clients: Client[];
+                    };
+                    clients = response.clients;
+                } catch (error) {
+                    console.error("Error fetching clients:", error);
+                    onSearch([], "Error loading companies");
+                    return;
+                }
 
-                if (!response.ok) throw new Error("Search failed");
-                const data = await response.json();
-                const filteredClients = data.clients || [];
-
+                const filteredClients = clients;
                 const message =
                     filteredClients.length === 0
                         ? "No companies found matching your filters"

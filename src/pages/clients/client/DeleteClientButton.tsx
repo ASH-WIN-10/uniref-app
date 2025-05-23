@@ -12,29 +12,23 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { invoke } from "@tauri-apps/api/core";
 
 export default function DeleteClientButton({ clientId }: { clientId: number }) {
     const navigate = useNavigate();
 
-    function deleteClient() {
-        fetch(`http://192.168.0.31:8080/v1/clients/${clientId}`, {
-            method: "DELETE",
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    if (response.status === 404)
-                        throw new Error("Client not found");
-                    else throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .catch((error) => {
-                console.error("Error deleting client:", error);
-            })
-            .finally(() => {
-                toast.success("Client deleted successfully");
-                navigate("/");
+    async function deleteClient() {
+        try {
+            await invoke("delete_client", {
+                clientId: clientId,
             });
+        } catch (error) {
+            console.error("Error deleting client:", error);
+            toast.error("Error deleting client");
+        } finally {
+            toast.success("Client deleted successfully");
+            navigate("/");
+        }
     }
 
     return (
