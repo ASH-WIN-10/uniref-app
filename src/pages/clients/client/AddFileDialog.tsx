@@ -64,14 +64,15 @@ function AddFileDialog({ clientId }: { clientId: number }) {
 
     async function handleFileSelection() {
         handleSingleFileSelection((selected: string) => {
+            let path: string | undefined;
             if (isWindowsOS) {
-                const path = selected.split("\\").join("/");
-                setFilepath(path);
+                path = selected.split("\\").pop();
+                setFilename(path || null);
             } else {
-                setFilepath(selected);
+                path = selected.split("/").pop();
+                setFilename(path || null);
             }
 
-            setFilename(filepath || null);
             setFilepath(selected);
             form.setValue("filepath", filepath || "");
         });
