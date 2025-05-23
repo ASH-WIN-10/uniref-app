@@ -15,6 +15,7 @@ pub fn run() {
             client_commands::fetch_client,
             client_commands::update_client,
             client_commands::delete_client,
+            file_commands::add_file,
             file_commands::delete_file,
         ])
         .run(tauri::generate_context!())

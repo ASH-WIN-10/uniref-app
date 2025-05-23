@@ -60,7 +60,6 @@ export default function CompanyListSearchBar({
                         clients: Client[];
                     };
                     clients = response.clients;
-                    console.log(queryParams.toString());
                 } catch (error) {
                     console.error("Error fetching clients:", error);
                     onSearch([], "Error loading companies");

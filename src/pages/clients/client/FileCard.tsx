@@ -120,6 +120,7 @@ function FileCard({ file }: { file: File }) {
                 </div>
                 <div className="flex flex-col items-center gap-2">
                     <a
+                        // TODO: Change url when s3 is implemented
                         href={"http://192.168.0.31:8080/" + file.file_path}
                         target="_blank"
                         rel="noopener noreferrer"

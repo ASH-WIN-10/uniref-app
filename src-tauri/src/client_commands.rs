@@ -1,7 +1,10 @@
-use crate::api_types::{ClientResponse, CreateFormData, FetchClientsResponse, UpdateClientRequest};
-use reqwest::multipart::{Form, Part};
+use crate::{
+    api_types::{ClientResponse, CreateFormData, FetchClientsResponse, UpdateClientRequest},
+    file_commands::get_file_part,
+};
+use reqwest::multipart::Form;
 use std::path::PathBuf;
-use tokio::{fs::File, io::AsyncReadExt};
+use tokio::fs::File;
 
 #[tauri::command]
 pub async fn fetch_clients(query_params: Option<String>) -> Result<FetchClientsResponse, String> {
@@ -62,16 +65,6 @@ pub async fn fetch_client(client_id: u32) -> Result<ClientResponse, String> {
 
 #[tauri::command]
 pub async fn create_client(form_data: CreateFormData) -> Result<ClientResponse, String> {
-    async fn get_file_part(file: &mut File, path: PathBuf) -> Result<Part, String> {
-        let mut buffer = Vec::new();
-        file.read_to_end(&mut buffer)
-            .await
-            .map_err(|e| format!("Failed to read file: {}", e))?;
-        let part =
-            Part::bytes(buffer).file_name(path.file_name().unwrap().to_str().unwrap().to_string());
-        Ok(part)
-    }
-
     let api_url = std::env::var("API_URL").expect("API_URL environment variable not set");
     let endpoint = format!("{}/clients", api_url);
 

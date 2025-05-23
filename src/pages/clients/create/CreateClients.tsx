@@ -80,8 +80,6 @@ export function CreateClients() {
                 };
             };
 
-            console.log("Response:", response);
-
             const clientId = response.client.id;
             toast.success("Client created successfully");
             navigate(`/clients/${clientId}`);
