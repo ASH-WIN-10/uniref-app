@@ -34,11 +34,11 @@ function DeleteFileButton({
                 fileId: file.id,
                 clientId: file.client_id,
             });
+            toast.success("File deleted successfully");
         } catch (error) {
             console.error("Error deleting file:", error);
             toast.error("Error deleting file");
         } finally {
-            toast.success("File deleted successfully");
             queryClient.invalidateQueries({
                 queryKey: ["client", file.client_id],
             });
