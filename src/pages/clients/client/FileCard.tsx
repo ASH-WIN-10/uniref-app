@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { ExternalLink, Trash2 } from "lucide-react";
+import { ExternalLink, Trash2, SendHorizonal } from "lucide-react";
 import { useState } from "react";
 import { File } from "./ClientPage";
 import {
@@ -80,6 +80,57 @@ function DeleteFileButton({
     );
 }
 
+function SendFile({ file, sendHidden }: { file: File; sendHidden: boolean }) {
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
+
+    async function handleSendFile() {
+        try {
+            await invoke("send_file", {
+                fileId: file.id,
+            });
+            toast.success("File sent successfully");
+        } catch (error) {
+            console.error("Error sending email:", error);
+            toast.error("Error sending email");
+        } finally {
+            queryClient.invalidateQueries({
+                queryKey: ["client", file.client_id],
+            });
+            navigate(`/clients/${file.client_id}`);
+        }
+    }
+
+    return (
+        <AlertDialog>
+            <AlertDialogTrigger>
+                <SendHorizonal
+                    size={18}
+                    className={cn(
+                        sendHidden ? "opacity-0" : "opacity-100",
+                        "cursor-pointer transition-opacity duration-200 hover:text-green-500",
+                    )}
+                />
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>
+                        Do you want to send this file?
+                    </AlertDialogTitle>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                        className="bg-primary hover:bg-primary/80"
+                        onClick={handleSendFile}>
+                        Send
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+    );
+}
+
 function FileCard({ file }: { file: File }) {
     const [deleteHidden, setDeleteHidden] = useState(true);
 
@@ -92,7 +143,6 @@ function FileCard({ file }: { file: File }) {
             minute: "2-digit",
         });
     }
-
     return (
         <div
             key={file.id}
@@ -130,6 +180,7 @@ function FileCard({ file }: { file: File }) {
                         <ExternalLink size={18} />
                     </a>
                     <DeleteFileButton file={file} deleteHidden={deleteHidden} />
+                    <SendFile file={file} sendHidden={deleteHidden} />
                 </div>
             </div>
         </div>
