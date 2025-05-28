@@ -59,7 +59,7 @@ export default function CompanyList() {
                 onSearch={handleSearch}
                 initialClients={initialClients || []}
             />
-            <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
+            <div className="cursor-default overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
                 <table className="min-w-full">
                     <thead className="bg-gray-200">
                         <tr>
