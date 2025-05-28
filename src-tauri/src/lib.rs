@@ -1,6 +1,7 @@
 use dotenv::dotenv;
 mod api_types;
 mod client_commands;
+mod email_commands;
 mod file_commands;
 
 #[tauri::command]
@@ -23,6 +24,7 @@ pub fn run() {
             client_commands::delete_client,
             file_commands::add_file,
             file_commands::delete_file,
+            email_commands::send_file_email,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

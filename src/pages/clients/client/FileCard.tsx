@@ -86,9 +86,12 @@ function SendFile({ file, sendHidden }: { file: File; sendHidden: boolean }) {
 
     async function handleSendFile() {
         try {
-            await invoke("send_file", {
+            toast.loading("Sending file...");
+            await invoke("send_file_email", {
                 fileId: file.id,
+                clientId: file.client_id,
             });
+            toast.dismiss();
             toast.success("File sent successfully");
         } catch (error) {
             console.error("Error sending email:", error);
