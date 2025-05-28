@@ -25,6 +25,7 @@ pub fn run() {
             file_commands::add_file,
             file_commands::delete_file,
             email_commands::send_file_email,
+            email_commands::send_category_files_email,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

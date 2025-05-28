@@ -38,7 +38,6 @@ const fileFormSchema = z.object({
             required_error: "Please select a category",
         },
     ),
-    filepath: z.string(),
 });
 
 type FileFormData = z.infer<typeof fileFormSchema>;
@@ -55,17 +54,23 @@ export default function SendDialog({ clientId }: { clientId: number }) {
 
     async function onSubmit(data: FileFormData) {
         try {
-            await invoke("add_file", {
+            setOpen(false);
+            toast.loading("Sending files...");
+
+            await invoke("send_category_files_email", {
                 clientId: clientId,
                 category: data.category,
             });
+
+            toast.dismiss();
             toast.success("File added successfully");
-            setOpen(false);
-            form.reset();
-            queryClient.invalidateQueries({ queryKey: ["client", clientId] });
         } catch (error) {
             console.error("Error:", error);
+            toast.dismiss();
             toast.error("An error occurred while sending the file.");
+        } finally {
+            form.reset();
+            queryClient.invalidateQueries({ queryKey: ["client", clientId] });
         }
     }
 
