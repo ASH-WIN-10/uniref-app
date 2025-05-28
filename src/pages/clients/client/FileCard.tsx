@@ -95,6 +95,7 @@ function SendFile({ file, sendHidden }: { file: File; sendHidden: boolean }) {
             toast.success("File sent successfully");
         } catch (error) {
             console.error("Error sending email:", error);
+            toast.dismiss();
             toast.error("Error sending email");
         } finally {
             queryClient.invalidateQueries({

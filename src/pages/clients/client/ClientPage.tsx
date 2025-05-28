@@ -9,6 +9,7 @@ import AddFile from "./AddFileDialog";
 import LoadingScreen from "@/components/custom/LoadingScreen";
 import DeleteClientButton from "./DeleteClientButton";
 import { invoke } from "@tauri-apps/api/core";
+import SendDialog from "./SendDialog";
 
 export interface File {
     id: number;
@@ -140,6 +141,9 @@ export default function ClientPage() {
                         </h2>
                         <div className="flex gap-2">
                             <AddFile clientId={clientId} />
+                        </div>
+                        <div className="flex gap-2">
+                            <SendDialog clientId={clientId} />
                         </div>
                     </div>
                     <div className="flex gap-2">
