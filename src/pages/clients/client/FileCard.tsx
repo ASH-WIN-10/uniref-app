@@ -13,7 +13,6 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { invoke } from "@tauri-apps/api/core";
@@ -25,7 +24,6 @@ function DeleteFileButton({
     file: File;
     deleteHidden: boolean;
 }) {
-    const navigate = useNavigate();
     const queryClient = useQueryClient();
 
     async function handleDeleteFile() {
@@ -42,7 +40,6 @@ function DeleteFileButton({
             queryClient.invalidateQueries({
                 queryKey: ["client", file.client_id],
             });
-            navigate(`/clients/${file.client_id}`);
         }
     }
 
@@ -81,27 +78,25 @@ function DeleteFileButton({
 }
 
 function SendFile({ file, sendHidden }: { file: File; sendHidden: boolean }) {
-    const navigate = useNavigate();
     const queryClient = useQueryClient();
 
     async function handleSendFile() {
         try {
-            toast.loading("Sending file...");
+            toast.info("Sending email...");
+
             await invoke("send_file_email", {
                 fileId: file.id,
                 clientId: file.client_id,
             });
-            toast.dismiss();
-            toast.success("File sent successfully");
+
+            toast.success("Email sent successfully");
         } catch (error) {
             console.error("Error sending email:", error);
-            toast.dismiss();
             toast.error("Error sending email");
         } finally {
             queryClient.invalidateQueries({
                 queryKey: ["client", file.client_id],
             });
-            navigate(`/clients/${file.client_id}`);
         }
     }
 

@@ -55,19 +55,17 @@ export default function SendDialog({ clientId }: { clientId: number }) {
     async function onSubmit(data: FileFormData) {
         try {
             setOpen(false);
-            toast.loading("Sending files...");
+            toast.info("Sending email...");
 
             await invoke("send_category_files_email", {
                 clientId: clientId,
                 category: data.category,
             });
 
-            toast.dismiss();
-            toast.success("File added successfully");
+            toast.success("Email added successfully");
         } catch (error) {
             console.error("Error:", error);
-            toast.dismiss();
-            toast.error("An error occurred while sending the file.");
+            toast.error("An error occurred while sending the email.");
         } finally {
             form.reset();
             queryClient.invalidateQueries({ queryKey: ["client", clientId] });
@@ -79,12 +77,12 @@ export default function SendDialog({ clientId }: { clientId: number }) {
             <DialogTrigger asChild>
                 <Button variant="outline">
                     <SendHorizontal />
-                    Send File
+                    Send Files
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Send File</DialogTitle>
+                    <DialogTitle>Send Files of a Category</DialogTitle>
                 </DialogHeader>
                 <DialogDescription>
                     Select a category of files to send.
